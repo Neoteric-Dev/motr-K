@@ -17,6 +17,7 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -886,13 +887,15 @@ public class MotrBlocks {
     }
 
     private static BlockInfo registerStableBlock(String id, Block baseBlock) {
-        DeferredBlock<Block> block = BLOCKS.register(id, () -> new Block(BlockBehaviour.Properties.ofFullCopy(baseBlock).setId(blockId(id))));
-        MotrItems.registerSimpleBlockItem(id, block);
+        DeferredBlock<Block> block = BLOCKS.register(id, () -> new Block(BlockBehaviour.Properties
+                .ofFullCopy(baseBlock).setId(blockId(id))));
+        MotrItems.registerStableBlockItem(id, block);
         return new BlockInfo(block, baseBlock);
     }
 
     public static BlockInfo registerStableAnvilBlock(String id, Block baseBlock) {
-        DeferredBlock<Block> block = registerBlock(id, () -> new StableAnvilBlock(BlockBehaviour.Properties.ofFullCopy(baseBlock).setId(blockId(id))));
+        DeferredBlock<Block> block = BLOCKS.register(id, () -> new StableAnvilBlock(BlockBehaviour.Properties.ofFullCopy(baseBlock).setId(blockId(id))));
+        MotrItems.registerStableBlockItem(id, block);
         return new BlockInfo(block, baseBlock);
     }
 
@@ -916,7 +919,7 @@ public class MotrBlocks {
     }
 
     private static WallInfo registerWallBlock(String id, Block baseBlock) {
-        DeferredBlock<?> wall = registerBlock(id, () -> new net.minecraft.world.level.block.WallBlock(
+        DeferredBlock<?> wall = registerBlock(id, () -> new WallBlock(
                 BlockBehaviour.Properties.ofFullCopy(baseBlock).setId(blockId(id))));
         return new WallInfo(wall, baseBlock);
     }

@@ -3,8 +3,11 @@ package com.materialsoftherift.motr.datagen;
 import com.materialsoftherift.motr.MaterialsOfTheRift;
 import com.materialsoftherift.motr.init.MotrBlocks;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import org.jetbrains.annotations.NotNull;
@@ -78,6 +81,11 @@ public class MotrBlockTagProvider extends BlockTagsProvider {
                 .add(getAllWallBlocks())
                 .add(getAllStairBlocks())
                 .add(getAllAnvilBlocks());
+
+        tag(TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(MaterialsOfTheRift.MODID, "stable")))
+                .add(getAllAnvilBlocks())
+                .add(getAllSandBlocks())
+                .add(getAllConcretePowderBlocks());
 
         tag(BlockTags.ANVIL)
                 .add(MotrBlocks.STABLE_ANVIL.block().get())
