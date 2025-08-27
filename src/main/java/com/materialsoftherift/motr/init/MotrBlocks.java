@@ -41,12 +41,13 @@ public class MotrBlocks {
 
         @Override
         protected void tick(@NotNull BlockState state, @NotNull ServerLevel level,
-                            @NotNull BlockPos blockPos, @NotNull RandomSource random) {}
+                            @NotNull BlockPos pos, @NotNull RandomSource random) {}
+
     }
 
     public record BlockInfo(DeferredBlock<Block> block, Block baseBlock) {
         public Item getBaseItem() {
-            return block.asItem();
+            return baseBlock.asItem();
         }
     }
 
@@ -301,7 +302,7 @@ public class MotrBlocks {
     public static final SlabInfo GOLD_BLOCK_SLAB = registerSlabBlock("gold_block_slab", Blocks.GOLD_BLOCK);
     public static final SlabInfo IRON_BLOCK_SLAB = registerSlabBlock("iron_block_slab", Blocks.IRON_BLOCK);
 
-    public static final Map<String, SlabInfo> REGISTERED_STANDARD_SLABS = Map.ofEntries(
+    public static final Map<String, SlabInfo> REGISTERED_STANDARD_SLABS = Map.<String, SlabInfo>ofEntries(
             Map.entry("white_concrete", WHITE_CONCRETE_SLAB),
             Map.entry("light_gray_concrete", LIGHT_GRAY_CONCRETE_SLAB), Map.entry("gray_concrete", GRAY_CONCRETE_SLAB),
             Map.entry("black_concrete", BLACK_CONCRETE_SLAB), Map.entry("brown_concrete", BROWN_CONCRETE_SLAB),
@@ -782,7 +783,8 @@ public class MotrBlocks {
             Map.entry("light_gray_concrete", LIGHT_GRAY_CONCRETE_FENCE_GATE),
             Map.entry("gray_concrete", GRAY_CONCRETE_FENCE_GATE),
             Map.entry("black_concrete", BLACK_CONCRETE_FENCE_GATE),
-            Map.entry("brown_concrete", BROWN_CONCRETE_FENCE_GATE), Map.entry("red_concrete", RED_CONCRETE_FENCE_GATE),
+            Map.entry("brown_concrete", BROWN_CONCRETE_FENCE_GATE),
+            Map.entry("red_concrete", RED_CONCRETE_FENCE_GATE),
             Map.entry("orange_concrete", ORANGE_CONCRETE_FENCE_GATE),
             Map.entry("yellow_concrete", YELLOW_CONCRETE_FENCE_GATE),
             Map.entry("lime_concrete", LIME_CONCRETE_FENCE_GATE),
@@ -884,16 +886,13 @@ public class MotrBlocks {
     }
 
     private static BlockInfo registerStableBlock(String id, Block baseBlock) {
-        DeferredBlock<Block> block = registerBlock(id, () ->
-                new Block(BlockBehaviour.Properties.ofFullCopy(baseBlock).setId(blockId(id))));
-        MotrItems.registerStableBlockItem(id, block);
+        DeferredBlock<Block> block = BLOCKS.register(id, () -> new Block(BlockBehaviour.Properties.ofFullCopy(baseBlock).setId(blockId(id))));
+        MotrItems.registerSimpleBlockItem(id, block);
         return new BlockInfo(block, baseBlock);
     }
 
     public static BlockInfo registerStableAnvilBlock(String id, Block baseBlock) {
-        DeferredBlock<Block> block = registerBlock(id, () -> new StableAnvilBlock(
-                BlockBehaviour.Properties.ofFullCopy(baseBlock).setId(blockId(id))));
-        MotrItems.registerStableBlockItem(id, block);
+        DeferredBlock<Block> block = registerBlock(id, () -> new StableAnvilBlock(BlockBehaviour.Properties.ofFullCopy(baseBlock).setId(blockId(id))));
         return new BlockInfo(block, baseBlock);
     }
 
@@ -955,6 +954,7 @@ public class MotrBlocks {
 
     private static ResourceKey<Block> blockId(String name) {
         return ResourceKey.create(Registries.BLOCK,
-                ResourceLocation.fromNamespaceAndPath(MaterialsOfTheRift.MODID, name));
+                        ResourceLocation.fromNamespaceAndPath(MaterialsOfTheRift.MODID, name));
     }
+
 }

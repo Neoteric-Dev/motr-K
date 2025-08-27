@@ -2,6 +2,10 @@ package com.materialsoftherift.motr.init;
 
 import com.materialsoftherift.motr.MaterialsOfTheRift;
 import com.materialsoftherift.motr.item.StableBlockItem;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -33,7 +37,9 @@ public class MotrItems {
     }
 
     public static DeferredItem<BlockItem> registerStableBlockItem(String id, DeferredBlock<Block> block) {
-        DeferredItem<BlockItem> stableBlockItem = ITEMS.register(id, () -> new StableBlockItem(block.get(), new Item.Properties()));
+        DeferredItem<BlockItem> stableBlockItem = ITEMS.register(id, () -> new StableBlockItem(block.get(), new Item.Properties().setId(ResourceKey.create(Registries.ITEM,
+                ResourceLocation.fromNamespaceAndPath(MaterialsOfTheRift.MODID, id)))));
+        System.out.println("Registered stable block item: " + id);
         BLOCK_ITEMS.add(stableBlockItem);
         return stableBlockItem;
     }

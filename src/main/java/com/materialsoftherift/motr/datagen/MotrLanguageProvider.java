@@ -71,7 +71,7 @@ public class MotrLanguageProvider extends LanguageProvider {
 
     private void addStableBlockTranslations(Map<String, MotrBlocks.BlockInfo> blockMap) {
         blockMap.forEach((baseName, blockInfo) -> {
-            String translation = snakeCaseToCapitalizedCase(baseName);
+            String translation = "Stable " + snakeCaseToCapitalizedCase(baseName);
             addBlock(blockInfo.block(), translation);
         });
     }

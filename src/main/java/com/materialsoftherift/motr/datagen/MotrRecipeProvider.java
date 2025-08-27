@@ -119,7 +119,7 @@ public class MotrRecipeProvider extends RecipeProvider {
     private void generateStableBlockRecipes(Map<String, MotrBlocks.BlockInfo> blockMap, HolderGetter<Item> getter) {
         blockMap.forEach((id, blockInfo) -> {
             ItemLike stableBlock = blockInfo.block().get();
-            ItemLike vanillaBlock = blockInfo.baseBlock();
+            ItemLike vanillaBlock = blockInfo.getBaseItem();
 
             ShapelessRecipeBuilder.shapeless(getter, RecipeCategory.BUILDING_BLOCKS, stableBlock, 1)
                 .requires(vanillaBlock)
@@ -136,10 +136,10 @@ public class MotrRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_" + id, has(vanillaBlock))
                 .save(this.output, "stable_" + id + "_from_chorus_flower");
 
-            ShapelessRecipeBuilder.shapeless(getter, RecipeCategory.BUILDING_BLOCKS, stableBlock, 1)
-                .requires(vanillaBlock)
+            ShapelessRecipeBuilder.shapeless(getter, RecipeCategory.BUILDING_BLOCKS, vanillaBlock, 1)
+                .requires(stableBlock)
                 .unlockedBy("has_" + id, has(vanillaBlock))
-                .save(this.output, "stable_" + id + "_from_stable");
+                .save(this.output, id + "_from_stable");
         });
     }
 

@@ -79,6 +79,11 @@ public class MotrBlockTagProvider extends BlockTagsProvider {
                 .add(getAllStairBlocks())
                 .add(getAllAnvilBlocks());
 
+        tag(BlockTags.ANVIL)
+                .add(MotrBlocks.STABLE_ANVIL.block().get())
+                .add(MotrBlocks.STABLE_CHIPPED_ANVIL.block().get())
+                .add(MotrBlocks.STABLE_DAMAGED_ANVIL.block().get());
+
         tag(BlockTags.MINEABLE_WITH_SHOVEL)
                 .add(MotrBlocks.DIRT_SLAB.slab().get())
                 .add(MotrBlocks.COARSE_DIRT_SLAB.slab().get())
