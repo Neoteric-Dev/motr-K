@@ -34,17 +34,23 @@ public class MotrModelProvider extends ModelProvider {
                 mapping -> mapping.put(TextureSlot.WOOL, ResourceLocation.withDefaultNamespace("block/hay_block_top"))
         ));
 
-        MotrBlocks.REGISTERED_STANDARD_SLABS.forEach((textureName, slabInfo) -> {
-            registerStandardSlabModel(blockModels, slabInfo.slab().get(), textureName);
-        });
+        MotrBlocks.REGISTERED_STABLE_SANDS.values().forEach(blockInfo ->
+                blockModels.createTrivialCube(blockInfo.block().get()));
 
-        MotrBlocks.REGISTERED_GLASS_SLABS.forEach((textureId, slabInfo) -> {
-            registerGlassSlabModel(blockModels, slabInfo.slab().get(), textureId);
-        });
+        MotrBlocks.REGISTERED_STABLE_CONCRETE_POWDERS.values().forEach(blockInfo ->
+                blockModels.createTrivialCube(blockInfo.block().get()));
 
-        MotrBlocks.REGISTERED_TRIMM_SLABS.forEach((id, slabInfo) -> {
-            registerTrimmSlabModel(blockModels, slabInfo.slab().get(), id, id, id);
-        });
+        MotrBlocks.REGISTERED_STABLE_ANVILS.values().forEach(blockInfo ->
+                blockModels.createAnvil(blockInfo.block().get()));
+
+        MotrBlocks.REGISTERED_STANDARD_SLABS.forEach((textureName, slabInfo) ->
+                registerStandardSlabModel(blockModels, slabInfo.slab().get(), textureName));
+
+        MotrBlocks.REGISTERED_GLASS_SLABS.forEach((textureId, slabInfo) ->
+                registerGlassSlabModel(blockModels, slabInfo.slab().get(), textureId));
+
+        MotrBlocks.REGISTERED_TRIMM_SLABS.forEach((id, slabInfo) ->
+                registerTrimmSlabModel(blockModels, slabInfo.slab().get(), id, id, id));
 
         MotrBlocks.REGISTERED_DIRECTIONAL_SLABS.forEach((id, slabInfo) -> {
             {

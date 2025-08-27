@@ -76,7 +76,8 @@ public class MotrBlockTagProvider extends BlockTagsProvider {
                 .add(getAllButtonBlocks())
                 .add(getAllFenceBlocks())
                 .add(getAllWallBlocks())
-                .add(getAllStairBlocks());
+                .add(getAllStairBlocks())
+                .add(getAllAnvilBlocks());
 
         tag(BlockTags.MINEABLE_WITH_SHOVEL)
                 .add(MotrBlocks.DIRT_SLAB.slab().get())
@@ -105,7 +106,10 @@ public class MotrBlockTagProvider extends BlockTagsProvider {
                 .add(MotrBlocks.BLUE_CONCRETE_POWDER_SLAB.slab().get())
                 .add(MotrBlocks.PURPLE_CONCRETE_POWDER_SLAB.slab().get())
                 .add(MotrBlocks.MAGENTA_CONCRETE_POWDER_SLAB.slab().get())
-                .add(MotrBlocks.PINK_CONCRETE_POWDER_SLAB.slab().get());
+                .add(MotrBlocks.PINK_CONCRETE_POWDER_SLAB.slab().get())
+
+                .add(getAllSandBlocks())
+                .add(getAllConcretePowderBlocks());
 
         tag(BlockTags.DIRT)
                 .add(MotrBlocks.DIRT_SLAB.slab().get())
@@ -150,6 +154,18 @@ public class MotrBlockTagProvider extends BlockTagsProvider {
                 .add(MotrBlocks.HAY_CARPET.get());
         // spotless:on
 
+    }
+
+    private Block[] getAllSandBlocks() {
+        return MotrBlocks.REGISTERED_STABLE_SANDS.values().stream().map(blockInfo -> blockInfo.block().get()).toArray(Block[]::new);
+    }
+
+    private Block[] getAllConcretePowderBlocks() {
+        return MotrBlocks.REGISTERED_STABLE_CONCRETE_POWDERS.values().stream().map(blockInfo -> blockInfo.block().get()).toArray(Block[]::new);
+    }
+
+    private Block[] getAllAnvilBlocks() {
+        return MotrBlocks.REGISTERED_STABLE_ANVILS.values().stream().map(blockInfo -> blockInfo.block().get()).toArray(Block[]::new);
     }
 
     private Block[] getAllSlabBlocks() {

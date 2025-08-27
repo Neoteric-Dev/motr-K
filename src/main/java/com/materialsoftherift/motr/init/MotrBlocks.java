@@ -1,23 +1,21 @@
 package com.materialsoftherift.motr.init;
 
 import com.materialsoftherift.motr.MaterialsOfTheRift;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.ButtonBlock;
-import net.minecraft.world.level.block.CarpetBlock;
-import net.minecraft.world.level.block.FenceBlock;
-import net.minecraft.world.level.block.FenceGateBlock;
-import net.minecraft.world.level.block.SlabBlock;
-import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.function.Supplier;
@@ -35,147 +33,138 @@ public class MotrBlocks {
         }
     }
 
-    public static class SlabInfo {
-        private final DeferredBlock<SlabBlock> slab;
-        private final Block baseBlock;
+    public static class StableAnvilBlock extends AnvilBlock {
 
-        public SlabInfo(DeferredBlock<SlabBlock> slab, Block baseBlock) {
-            this.slab = slab;
-            this.baseBlock = baseBlock;
+        public StableAnvilBlock(Properties properties) {
+            super(properties);
         }
 
-        public DeferredBlock<SlabBlock> slab() {
-            return slab;
-        }
+        @Override
+        protected void tick(@NotNull BlockState state, @NotNull ServerLevel level,
+                            @NotNull BlockPos blockPos, @NotNull RandomSource random) {}
+    }
 
-        public Block baseBlock() {
-            return baseBlock;
+    public record BlockInfo(DeferredBlock<Block> block, Block baseBlock) {
+        public Item getBaseItem() {
+            return block.asItem();
         }
+    }
 
+    public record SlabInfo(DeferredBlock<SlabBlock> slab, Block baseBlock) {
         public Item getBaseItem() {
             return baseBlock.asItem();
         }
     }
 
-    public static class WallInfo {
-        private final DeferredBlock<?> wall;
-        private final Block baseBlock;
-
-        public WallInfo(DeferredBlock<?> wall, Block baseBlock) {
-            this.wall = wall;
-            this.baseBlock = baseBlock;
-        }
-
-        public DeferredBlock<?> wall() {
-            return wall;
-        }
-
-        public Block baseBlock() {
-            return baseBlock;
-        }
-
+    public record WallInfo(DeferredBlock<?> wall, Block baseBlock) {
         public Item getBaseItem() {
-            return wall.get().asItem();
-        }
-
+                return wall.get().asItem();
+            }
         public Item getWallItem() {
-            return wall.get().asItem();
-        }
+                return wall.get().asItem();
+            }
     }
 
-    public static class ButtonInfo {
-        private final DeferredBlock<ButtonBlock> button;
-        private final Block baseBlock;
-
-        public ButtonInfo(DeferredBlock<ButtonBlock> button, Block baseBlock) {
-            this.button = button;
-            this.baseBlock = baseBlock;
-        }
-
-        public DeferredBlock<ButtonBlock> button() {
-            return button;
-        }
-
-        public Block baseBlock() {
-            return baseBlock;
-        }
-
+    public record ButtonInfo(DeferredBlock<ButtonBlock> button, Block baseBlock) {
         public Item getBaseItem() {
-            return baseBlock.asItem();
-        }
+                return baseBlock.asItem();
+            }
     }
 
-    public static class FenceInfo {
-        private final DeferredBlock<FenceBlock> fence;
-        private final Block baseBlock;
-
-        public FenceInfo(DeferredBlock<FenceBlock> fence, Block baseBlock) {
-            this.fence = fence;
-            this.baseBlock = baseBlock;
-        }
-
-        public DeferredBlock<FenceBlock> fence() {
-            return fence;
-        }
-
-        public Block baseBlock() {
-            return baseBlock;
-        }
-
+    public record FenceInfo(DeferredBlock<FenceBlock> fence, Block baseBlock) {
         public Item getBaseItem() {
-            return baseBlock.asItem();
-        }
+                return baseBlock.asItem();
+            }
     }
 
-    public static class FenceGateInfo {
-        private final DeferredBlock<FenceGateBlock> fenceGate;
-        private final Block baseBlock;
-
-        public FenceGateInfo(DeferredBlock<FenceGateBlock> fenceGate, Block baseBlock) {
-            this.fenceGate = fenceGate;
-            this.baseBlock = baseBlock;
-        }
-
-        public DeferredBlock<FenceGateBlock> fenceGate() {
-            return fenceGate;
-        }
-
-        public Block baseBlock() {
-            return baseBlock;
-        }
-
+    public record FenceGateInfo(DeferredBlock<FenceGateBlock> fenceGate, Block baseBlock) {
         public Item getBaseItem() {
-            return baseBlock.asItem();
-        }
-
+                return baseBlock.asItem();
+            }
         public Item getFenceGateItem() {
-            return fenceGate.get().asItem();
-        }
+                return fenceGate.get().asItem();
+            }
     }
 
-    public static class StairInfo {
-        private final DeferredBlock<StairBlock> stair;
-        private final Block baseBlock;
-
-        public StairInfo(DeferredBlock<StairBlock> stair, Block baseBlock) {
-            this.stair = stair;
-            this.baseBlock = baseBlock;
-        }
-
-        public DeferredBlock<StairBlock> stair() {
-            return stair;
-        }
-
-        public Block baseBlock() {
-            return baseBlock;
-        }
-
+    public record StairInfo(DeferredBlock<StairBlock> stair, Block baseBlock) {
         public Item getBaseItem() {
-            return baseBlock.asItem();
-        }
+                return baseBlock.asItem();
+            }
     }
 
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MaterialsOfTheRift.MODID);
+
+    public static final BlockInfo STABLE_SAND = registerStableBlock("stable_sand", Blocks.SAND);
+    public static final BlockInfo STABLE_RED_SAND = registerStableBlock("stable_red_sand", Blocks.RED_SAND);
+
+    public static final BlockInfo STABLE_WHITE_CONCRETE_POWDER = registerStableBlock("stable_white_concrete_powder",
+            Blocks.WHITE_CONCRETE_POWDER);
+    public static final BlockInfo STABLE_LIGHT_GRAY_CONCRETE_POWDER = registerStableBlock("stable_light_gray_concrete_powder",
+            Blocks.LIGHT_GRAY_CONCRETE_POWDER);
+    public static final BlockInfo STABLE_GRAY_CONCRETE_POWDER = registerStableBlock("stable_gray_concrete_powder",
+            Blocks.GRAY_CONCRETE_POWDER);
+    public static final BlockInfo STABLE_BLACK_CONCRETE_POWDER = registerStableBlock("stable_black_concrete_powder",
+            Blocks.BLACK_CONCRETE_POWDER);
+    public static final BlockInfo STABLE_BROWN_CONCRETE_POWDER = registerStableBlock("stable_brown_concrete_powder",
+            Blocks.BROWN_CONCRETE_POWDER);
+    public static final BlockInfo STABLE_RED_CONCRETE_POWDER = registerStableBlock("stable_red_concrete_powder",
+            Blocks.RED_CONCRETE_POWDER);
+    public static final BlockInfo STABLE_ORANGE_CONCRETE_POWDER = registerStableBlock("stable_orange_concrete_powder",
+            Blocks.ORANGE_CONCRETE_POWDER);
+    public static final BlockInfo STABLE_YELLOW_CONCRETE_POWDER = registerStableBlock("stable_yellow_concrete_powder",
+            Blocks.YELLOW_CONCRETE_POWDER);
+    public static final BlockInfo STABLE_LIME_CONCRETE_POWDER = registerStableBlock("stable_lime_concrete_powder",
+            Blocks.LIME_CONCRETE_POWDER);
+    public static final BlockInfo STABLE_GREEN_CONCRETE_POWDER = registerStableBlock("stable_green_concrete_powder",
+            Blocks.GREEN_CONCRETE_POWDER);
+    public static final BlockInfo STABLE_CYAN_CONCRETE_POWDER = registerStableBlock("stable_cyan_concrete_powder",
+            Blocks.CYAN_CONCRETE_POWDER);
+    public static final BlockInfo STABLE_LIGHT_BLUE_CONCRETE_POWDER = registerStableBlock("stable_light_blue_concrete_powder",
+            Blocks.LIGHT_BLUE_CONCRETE_POWDER);
+    public static final BlockInfo STABLE_BLUE_CONCRETE_POWDER = registerStableBlock("stable_blue_concrete_powder",
+            Blocks.BLUE_CONCRETE_POWDER);
+    public static final BlockInfo STABLE_PURPLE_CONCRETE_POWDER = registerStableBlock("stable_purple_concrete_powder",
+            Blocks.PURPLE_CONCRETE_POWDER);
+    public static final BlockInfo STABLE_MAGENTA_CONCRETE_POWDER = registerStableBlock("stable_magenta_concrete_powder",
+            Blocks.MAGENTA_CONCRETE_POWDER);
+    public static final BlockInfo STABLE_PINK_CONCRETE_POWDER = registerStableBlock("stable_pink_concrete_powder",
+            Blocks.PINK_CONCRETE_POWDER);
+
+    public static final BlockInfo STABLE_ANVIL = registerStableAnvilBlock("stable_anvil", Blocks.ANVIL);
+    public static final BlockInfo STABLE_CHIPPED_ANVIL = registerStableAnvilBlock("chipped_stable_anvil",
+            Blocks.CHIPPED_ANVIL);
+    public static final BlockInfo STABLE_DAMAGED_ANVIL = registerStableAnvilBlock("damaged_stable_anvil",
+            Blocks.DAMAGED_ANVIL);
+
+    public static final Map<String, BlockInfo> REGISTERED_STABLE_SANDS = Map.ofEntries(
+            Map.entry("sand", STABLE_SAND),
+            Map.entry("red_sand", STABLE_RED_SAND)
+    );
+
+    public static final Map<String, BlockInfo> REGISTERED_STABLE_CONCRETE_POWDERS = Map.ofEntries(
+            Map.entry("white_concrete_powder", STABLE_WHITE_CONCRETE_POWDER),
+            Map.entry("light_gray_concrete_powder", STABLE_LIGHT_GRAY_CONCRETE_POWDER),
+            Map.entry("gray_concrete_powder", STABLE_GRAY_CONCRETE_POWDER),
+            Map.entry("black_concrete_powder", STABLE_BLACK_CONCRETE_POWDER),
+            Map.entry("brown_concrete_powder", STABLE_BROWN_CONCRETE_POWDER),
+            Map.entry("red_concrete_powder", STABLE_RED_CONCRETE_POWDER),
+            Map.entry("orange_concrete_powder", STABLE_ORANGE_CONCRETE_POWDER),
+            Map.entry("yellow_concrete_powder", STABLE_YELLOW_CONCRETE_POWDER),
+            Map.entry("lime_concrete_powder", STABLE_LIME_CONCRETE_POWDER),
+            Map.entry("green_concrete_powder", STABLE_GREEN_CONCRETE_POWDER),
+            Map.entry("cyan_concrete_powder", STABLE_CYAN_CONCRETE_POWDER),
+            Map.entry("light_blue_concrete_powder", STABLE_LIGHT_BLUE_CONCRETE_POWDER),
+            Map.entry("blue_concrete_powder", STABLE_BLUE_CONCRETE_POWDER),
+            Map.entry("purple_concrete_powder", STABLE_PURPLE_CONCRETE_POWDER),
+            Map.entry("magenta_concrete_powder", STABLE_MAGENTA_CONCRETE_POWDER),
+            Map.entry("pink_concrete_powder", STABLE_PINK_CONCRETE_POWDER)
+    );
+
+    public static final Map<String, BlockInfo> REGISTERED_STABLE_ANVILS = Map.ofEntries(
+            Map.entry("anvil", STABLE_ANVIL),
+            Map.entry("chipped_anvil", STABLE_CHIPPED_ANVIL),
+            Map.entry("damaged_anvil", STABLE_DAMAGED_ANVIL)
+    );
 
     public static final SlabInfo WHITE_CONCRETE_SLAB = registerSlabBlock("white_concrete_slab", Blocks.WHITE_CONCRETE);
     public static final SlabInfo LIGHT_GRAY_CONCRETE_SLAB = registerSlabBlock("light_gray_concrete_slab",
@@ -892,6 +881,20 @@ public class MotrBlocks {
         DeferredBlock<T> register = BLOCKS.register(key, sup);
         MotrItems.registerSimpleBlockItem(key, register);
         return register;
+    }
+
+    private static BlockInfo registerStableBlock(String id, Block baseBlock) {
+        DeferredBlock<Block> block = registerBlock(id, () ->
+                new Block(BlockBehaviour.Properties.ofFullCopy(baseBlock).setId(blockId(id))));
+        MotrItems.registerStableBlockItem(id, block);
+        return new BlockInfo(block, baseBlock);
+    }
+
+    public static BlockInfo registerStableAnvilBlock(String id, Block baseBlock) {
+        DeferredBlock<Block> block = registerBlock(id, () -> new StableAnvilBlock(
+                BlockBehaviour.Properties.ofFullCopy(baseBlock).setId(blockId(id))));
+        MotrItems.registerStableBlockItem(id, block);
+        return new BlockInfo(block, baseBlock);
     }
 
     private static <T extends Block> DeferredBlock<T> registerDevBlock(String key, Supplier<T> sup) {
