@@ -18,6 +18,9 @@ public class MotrBlockLootTableProvider extends BlockLootSubProvider {
     @Override
     protected void generate() {
 
+        MotrBlocks.REGISTERED_STABLE_SANDS.values().forEach(blockInfo -> dropSelf(blockInfo.block().get()));
+        MotrBlocks.REGISTERED_STABLE_CONCRETE_POWDERS.values().forEach(blockInfo -> dropSelf(blockInfo.block().get()));
+        MotrBlocks.REGISTERED_STABLE_ANVILS.values().forEach(blockInfo -> dropSelf(blockInfo.block().get()));
         MotrBlocks.REGISTERED_STANDARD_SLABS.values().forEach(slabInfo -> dropSelf(slabInfo.slab().get()));
         MotrBlocks.REGISTERED_DIRECTIONAL_SLABS.values().forEach(slabInfo -> dropSelf(slabInfo.slab().get()));
         MotrBlocks.REGISTERED_TRIMM_SLABS.values().forEach(slabInfo -> dropSelf(slabInfo.slab().get()));

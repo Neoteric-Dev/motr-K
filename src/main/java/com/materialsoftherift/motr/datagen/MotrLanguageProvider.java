@@ -43,7 +43,12 @@ public class MotrLanguageProvider extends LanguageProvider {
 
         addStairTranslations(MotrBlocks.REGISTERED_STANDARD_STAIRS);
 
+        addStableBlockTranslations(MotrBlocks.REGISTERED_STABLE_SANDS);
+        addStableBlockTranslations(MotrBlocks.REGISTERED_STABLE_CONCRETE_POWDERS);
+        addStableBlockTranslations(MotrBlocks.REGISTERED_STABLE_ANVILS);
+
         add("itemGroup." + MaterialsOfTheRift.MODID, "MOTR");
+        add("item.motr.ignores_gravity", "Ignores Gravity");
 
         addBlock(MotrBlocks.HAY_CARPET, "Hay Carpet");
 
@@ -62,6 +67,13 @@ public class MotrLanguageProvider extends LanguageProvider {
             sb.append(" ");
         }
         return sb.toString().trim();
+    }
+
+    private void addStableBlockTranslations(Map<String, MotrBlocks.BlockInfo> blockMap) {
+        blockMap.forEach((baseName, blockInfo) -> {
+            String translation = "Stable " + snakeCaseToCapitalizedCase(baseName);
+            addBlock(blockInfo.block(), translation);
+        });
     }
 
     private void addStairTranslations(Map<String, MotrBlocks.StairInfo> stairMap) {
