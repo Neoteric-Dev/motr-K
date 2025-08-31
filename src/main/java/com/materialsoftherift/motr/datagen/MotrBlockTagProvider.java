@@ -76,12 +76,11 @@ public class MotrBlockTagProvider extends BlockTagsProvider {
                 .add(getAllButtonBlocks())
                 .add(getAllFenceBlocks())
                 .add(getAllWallBlocks())
-                .add(getAllStairBlocks());
+                .add(getAllStairBlocks())
+                .add(getAllAnvilBlocks());
 
         tag(BlockTags.ANVIL)
-                .add(MotrBlocks.STABLE_ANVIL.block().get())
-                .add(MotrBlocks.STABLE_CHIPPED_ANVIL.block().get())
-                .add(MotrBlocks.STABLE_DAMAGED_ANVIL.block().get());
+                .add(getAllAnvilBlocks());
 
         tag(BlockTags.SAND)
                 .add(getAllSandBlocks());
@@ -117,9 +116,6 @@ public class MotrBlockTagProvider extends BlockTagsProvider {
 
                 .add(getAllSandBlocks())
                 .add(getAllConcretePowderBlocks());
-
-        tag(BlockTags.ANVIL)
-               .add(getAllAnvilBlocks());
 
         tag(BlockTags.DIRT)
                 .add(MotrBlocks.DIRT_SLAB.slab().get())

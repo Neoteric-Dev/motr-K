@@ -2,21 +2,25 @@ package com.materialsoftherift.motr.datagen;
 
 import com.materialsoftherift.motr.MaterialsOfTheRift;
 import com.materialsoftherift.motr.init.MotrBlocks;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import net.minecraft.client.color.item.GrassColorSource;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.ModelProvider;
-import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
-import net.minecraft.client.data.models.blockstates.PropertyDispatch;
-import net.minecraft.client.data.models.blockstates.Variant;
-import net.minecraft.client.data.models.blockstates.VariantProperties;
+import net.minecraft.client.data.models.blockstates.*;
 import net.minecraft.client.data.models.model.*;
+import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.SlabType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.properties.*;
 import net.neoforged.neoforge.client.model.generators.template.ExtendedModelTemplateBuilder;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class MotrModelProvider extends ModelProvider {
 
@@ -37,6 +41,242 @@ public class MotrModelProvider extends ModelProvider {
                 (texture, blockInfo) -> simpleVanillaModelRedirect(blockModels, blockInfo.block().get(), texture));
         MotrBlocks.REGISTERED_STABLE_ANVILS.forEach(
                 (texture, blockInfo) -> anvilVanillaModelRedirect(blockModels, blockInfo.block().get(), texture));
+
+        MotrBlocks.REGISTERED_QUENCHED_BLOCKS.forEach(
+                (texture, blockInfo) -> {
+                    if (blockInfo.baseBlock() instanceof CoralFanBlock) {
+                        TexturedModel texturedmodel = TexturedModel.CORAL_FAN.get(blockInfo.baseBlock());
+                        ResourceLocation resourcelocation = texturedmodel.create(blockInfo.baseBlock(),
+                                blockModels.modelOutput);
+                        blockModels.blockStateOutput.accept(
+                                BlockModelGenerators.createSimpleBlock(blockInfo.block().get(), resourcelocation));
+
+                        ResourceLocation defaultModel = ModelLocationUtils
+                                .getModelLocation(blockInfo.baseBlock().asItem());
+                        itemModels.itemModelOutput.accept(blockInfo.block().get().asItem(),
+                                ItemModelUtils.plainModel(defaultModel));
+                        return;
+                    }
+                    if (blockInfo.baseBlock() instanceof SeaPickleBlock) {
+                        ResourceLocation defaultModel = ModelLocationUtils.getModelLocation(blockInfo.baseBlock());
+                        itemModels.itemModelOutput.accept(blockInfo.block().get().asItem(),
+                                ItemModelUtils.plainModel(defaultModel));
+                        blockModels.blockStateOutput.accept(MultiVariantGenerator.multiVariant(blockInfo.block().get())
+                                .with(PropertyDispatch.property(SeaPickleBlock.PICKLES)
+                                        .select(1, List.of(BlockModelGenerators.createRotatedVariants(
+                                                ModelLocationUtils.getModelLocation(Blocks.SEA_PICKLE))))
+                                        .select(2,
+                                                List.of(BlockModelGenerators.createRotatedVariants(ResourceLocation
+                                                        .withDefaultNamespace("block/two_sea_pickles"))))
+                                        .select(3,
+                                                List.of(BlockModelGenerators.createRotatedVariants(ResourceLocation
+                                                        .withDefaultNamespace("block/three_sea_pickles"))))
+                                        .select(4,
+                                                List.of(BlockModelGenerators.createRotatedVariants(ResourceLocation
+                                                        .withDefaultNamespace("block/four_sea_pickles"))))
+                                )
+                        );
+                        return;
+                    }
+
+                    ResourceLocation defaultModel = ModelLocationUtils.getModelLocation(blockInfo.baseBlock());
+                    itemModels.itemModelOutput.accept(blockInfo.block().get().asItem(),
+                            ItemModelUtils.plainModel(defaultModel));
+
+                    ResourceLocation vanillaModel = ModelLocationUtils.getModelLocation(blockInfo.baseBlock());
+                    blockModels.blockStateOutput
+                            .accept(BlockModelGenerators.createSimpleBlock(blockInfo.block().get(), vanillaModel));
+                });
+        MotrBlocks.REGISTERED_UNBOUND_BLOCKS.forEach(
+                (textureName, blockInfo) -> {
+                    Block unboundBlock = blockInfo.block().get();
+                    Block baseBlock = blockInfo.baseBlock();
+                    Item unboundItem = unboundBlock.asItem();
+
+                    if (baseBlock instanceof GlowLichenBlock) {
+                        ResourceLocation defaultModel = ModelLocationUtils.getModelLocation(blockInfo.baseBlock());
+                        itemModels.itemModelOutput.accept(blockInfo.block().get().asItem(),
+                                ItemModelUtils.plainModel(defaultModel));
+
+                        ResourceLocation vanillaModel = ModelLocationUtils.getModelLocation(blockInfo.baseBlock());
+                        blockModels.blockStateOutput
+                                .accept(BlockModelGenerators.createSimpleBlock(blockInfo.block().get(), vanillaModel));
+                        return;
+                    }
+
+                    if (baseBlock instanceof CropBlock || baseBlock instanceof NetherWartBlock) {
+                        Property<Integer> ageProperty;
+                        if (baseBlock instanceof BeetrootBlock) {
+                            ageProperty = BeetrootBlock.AGE;
+                        } else {
+                            ageProperty = baseBlock instanceof NetherWartBlock ? NetherWartBlock.AGE : CropBlock.AGE;
+                        }
+                        int[] visualStages;
+                        String itemName;
+
+                        if (baseBlock instanceof BeetrootBlock) {
+                            visualStages = new int[] { 0, 1, 2, 3 };
+                            itemName = "beetroot_seeds";
+                        } else if (baseBlock == Blocks.WHEAT) {
+                            visualStages = new int[] { 0, 1, 2, 3, 4, 5, 6, 7 };
+                            itemName = "wheat_seeds";
+                        } else if (baseBlock == Blocks.CARROTS) {
+                            visualStages = new int[] { 0, 0, 1, 1, 2, 2, 2, 3 };
+                            itemName = "carrot";
+                        } else if (baseBlock == Blocks.POTATOES) {
+                            visualStages = new int[] { 0, 0, 1, 1, 2, 2, 2, 3 };
+                            itemName = "potato";
+                        } else if (baseBlock == Blocks.NETHER_WART) {
+                            visualStages = new int[] { 0, 1, 1, 2 };
+                            itemName = "nether_wart";
+                        } else {
+                            visualStages = new int[] { 0, 1, 2, 3, 4, 5, 6, 7 };
+                            itemName = unboundItem.toString();
+                        }
+
+                        Int2ObjectMap<ResourceLocation> int2objectmap = new Int2ObjectOpenHashMap<>();
+                        PropertyDispatch propertydispatch = PropertyDispatch.property(ageProperty).generate((age) -> {
+                            int i = visualStages[age];
+                            ResourceLocation resourcelocation = int2objectmap.computeIfAbsent(i,
+                                    (p_387534_) -> blockModels.createSuffixedVariant(baseBlock, "_stage" + i,
+                                            ModelTemplates.CROP, TextureMapping::crop));
+                            return Variant.variant().with(VariantProperties.MODEL, resourcelocation);
+                        });
+                        blockModels.blockStateOutput
+                                .accept(MultiVariantGenerator.multiVariant(unboundBlock).with(propertydispatch));
+
+                        ResourceLocation itemModelLoc = ModelTemplates.FLAT_ITEM.create(
+                                ModelLocationUtils.getModelLocation(unboundItem),
+                                TextureMapping.layer0(ResourceLocation.withDefaultNamespace("item/" + itemName)),
+                                itemModels.modelOutput);
+                        itemModels.itemModelOutput.accept(unboundItem, ItemModelUtils.plainModel(itemModelLoc));
+
+                        return;
+                    }
+
+                    if (baseBlock instanceof SweetBerryBushBlock) {
+                        ResourceLocation itemModelLoc = ModelTemplates.FLAT_ITEM.create(
+                                ModelLocationUtils.getModelLocation(unboundItem),
+                                TextureMapping.layer0(ResourceLocation.withDefaultNamespace("item/sweet_berries")),
+                                itemModels.modelOutput);
+                        itemModels.itemModelOutput.accept(unboundItem, ItemModelUtils.plainModel(itemModelLoc));
+                        blockModels.blockStateOutput.accept(MultiVariantGenerator.multiVariant(unboundBlock)
+                                .with(PropertyDispatch.property(SweetBerryBushBlock.AGE).generate(age -> {
+                                    String stageSuffix = "_stage" + age;
+                                    ResourceLocation texture = ResourceLocation
+                                            .withDefaultNamespace("block/" + textureName + stageSuffix);
+                                    ResourceLocation modelLoc = ModelTemplates.CROSS.createWithSuffix(unboundBlock,
+                                            stageSuffix, TextureMapping.cross(texture), blockModels.modelOutput);
+                                    return Variant.variant().with(VariantProperties.MODEL, modelLoc);
+                                }))
+                        );
+                        return;
+                    }
+
+                    if (baseBlock instanceof DoublePlantBlock) {
+                        String itemTexture;
+                        if ("sunflower".equals(textureName)) {
+                            itemTexture = "sunflower_front";
+                        } else {
+                            itemTexture = textureName + "_top";
+                        }
+                        ResourceLocation itemModelLoc = ModelTemplates.FLAT_ITEM.create(
+                                ModelLocationUtils.getModelLocation(unboundItem),
+                                TextureMapping.layer0(ResourceLocation.withDefaultNamespace("block/" + itemTexture)),
+                                itemModels.modelOutput);
+                        itemModels.itemModelOutput.accept(unboundItem, ItemModelUtils.plainModel(itemModelLoc));
+
+                        if (baseBlock == Blocks.SUNFLOWER) {
+                            ResourceLocation top = ModelLocationUtils.getModelLocation(Blocks.SUNFLOWER, "_top");
+                            ResourceLocation bottom = blockModels.createSuffixedVariant(Blocks.SUNFLOWER, "_bottom",
+                                    BlockModelGenerators.PlantType.NOT_TINTED.getCross(), TextureMapping::cross);
+                            blockModels.createDoubleBlock(unboundBlock, top, bottom);
+                            return;
+                        }
+                        boolean isTinted = "tall_grass".equals(textureName) || "large_fern".equals(textureName);
+                        BlockModelGenerators.PlantType plantType;
+                        if (isTinted) {
+                            plantType = BlockModelGenerators.PlantType.TINTED;
+                        } else {
+                            plantType = BlockModelGenerators.PlantType.NOT_TINTED;
+                        }
+
+                        ResourceLocation topModel = blockModels.createSuffixedVariant(unboundBlock, "_top",
+                                plantType.getCross(), res -> TextureMapping
+                                        .cross(ResourceLocation.withDefaultNamespace("block/" + textureName + "_top")));
+                        ResourceLocation bottomModel = blockModels.createSuffixedVariant(unboundBlock, "_bottom",
+                                plantType.getCross(), res -> TextureMapping.cross(
+                                        ResourceLocation.withDefaultNamespace("block/" + textureName + "_bottom")));
+                        blockModels.createDoubleBlock(unboundBlock, topModel, bottomModel);
+                        return;
+                    }
+
+                    if (baseBlock instanceof FlowerBlock || baseBlock instanceof SaplingBlock
+                            || baseBlock instanceof TallGrassBlock || baseBlock instanceof FungusBlock
+                            || baseBlock instanceof MushroomBlock) {
+                        boolean isTinted = baseBlock instanceof TallGrassBlock || "fern".equals(textureName);
+                        BlockModelGenerators.PlantType plantType;
+                        if (isTinted) {
+                            plantType = BlockModelGenerators.PlantType.TINTED;
+                        } else {
+                            plantType = BlockModelGenerators.PlantType.NOT_TINTED;
+                        }
+                        ResourceLocation texture = ResourceLocation.withDefaultNamespace("block/" + textureName);
+
+                        ResourceLocation model = plantType.getCross()
+                                .create(unboundBlock, TextureMapping.cross(texture), blockModels.modelOutput);
+                        blockModels.blockStateOutput
+                                .accept(BlockModelGenerators.createSimpleBlock(unboundBlock, model));
+
+                        ResourceLocation itemModelLocation = ModelLocationUtils.getModelLocation(unboundItem);
+                        ModelTemplates.FLAT_ITEM.create(itemModelLocation, TextureMapping.layer0(texture),
+                                blockModels.modelOutput);
+
+                        if (isTinted) {
+                            blockModels.registerSimpleTintedItemModel(unboundBlock, itemModelLocation,
+                                    new GrassColorSource());
+                        } else {
+                            itemModels.itemModelOutput.accept(unboundItem,
+                                    ItemModelUtils.plainModel(itemModelLocation));
+                        }
+                        return;
+                    }
+
+                    if (baseBlock instanceof PointedDripstoneBlock) {
+                        PropertyDispatch.C2<Direction, DripstoneThickness> myDispatch = PropertyDispatch
+                                .properties(PointedDripstoneBlock.TIP_DIRECTION, PointedDripstoneBlock.THICKNESS);
+                        for (DripstoneThickness thickness : DripstoneThickness.values()) {
+                            myDispatch.select(Direction.UP, thickness, createUnboundPointedDripstoneVariant(blockModels,
+                                    unboundBlock, Direction.UP, thickness));
+                        }
+                        for (DripstoneThickness thickness : DripstoneThickness.values()) {
+                            myDispatch.select(Direction.DOWN, thickness, createUnboundPointedDripstoneVariant(
+                                    blockModels, unboundBlock, Direction.DOWN, thickness));
+                        }
+                        blockModels.blockStateOutput
+                                .accept(MultiVariantGenerator.multiVariant(unboundBlock).with(myDispatch));
+                        ResourceLocation dripStone = ModelLocationUtils.getModelLocation(Items.POINTED_DRIPSTONE);
+                        itemModels.itemModelOutput.accept(unboundItem, ItemModelUtils.plainModel(dripStone));
+
+                        return;
+                    }
+
+                    if (baseBlock instanceof CactusBlock) {
+                        ResourceLocation vanillaCactusModel = ModelLocationUtils.getModelLocation(Blocks.CACTUS);
+                        blockModels.blockStateOutput
+                                .accept(BlockModelGenerators.createSimpleBlock(unboundBlock, vanillaCactusModel));
+                        itemModels.itemModelOutput.accept(unboundItem, ItemModelUtils.plainModel(vanillaCactusModel));
+                        return;
+                    }
+
+                    if (baseBlock instanceof BambooStalkBlock) {
+                        createUnboundBambooModels(blockModels, itemModels, unboundBlock);
+                        return;
+                    }
+
+                    simpleVanillaModelRedirect(blockModels, blockInfo.block().get(), textureName);
+
+                });
 
         MotrBlocks.REGISTERED_STANDARD_SLABS.forEach(
                 (textureName, slabInfo) -> registerStandardSlabModel(blockModels, slabInfo.slab().get(), textureName));
@@ -138,6 +378,52 @@ public class MotrModelProvider extends ModelProvider {
                         .select(SlabType.BOTTOM, Variant.variant().with(VariantProperties.MODEL, bottom))
                         .select(SlabType.TOP, Variant.variant().with(VariantProperties.MODEL, top))
                         .select(SlabType.DOUBLE, Variant.variant().with(VariantProperties.MODEL, cube))));
+    }
+
+    private Variant createUnboundPointedDripstoneVariant(
+            BlockModelGenerators blockModels,
+            Block block,
+            Direction direction,
+            DripstoneThickness dripstoneThickness) {
+        String suffix = "_" + direction.getSerializedName() + "_" + dripstoneThickness.getSerializedName();
+        ResourceLocation texture = ResourceLocation.withDefaultNamespace("block/pointed_dripstone" + suffix);
+        TextureMapping textureMapping = TextureMapping.cross(texture);
+        ResourceLocation model = ModelTemplates.POINTED_DRIPSTONE.createWithSuffix(block, suffix, textureMapping,
+                blockModels.modelOutput);
+        return Variant.variant().with(VariantProperties.MODEL, model);
+    }
+
+    public void createUnboundBambooModels(
+            BlockModelGenerators blockModels,
+            ItemModelGenerators itemModels,
+            Block unboundBamboo) {
+        blockModels.blockStateOutput.accept(
+                MultiPartGenerator.multiPart(unboundBamboo)
+                        .with(
+                                Condition.condition().term(BlockStateProperties.AGE_1, 0),
+                                blockModels.createBambooModels(0)
+                        )
+                        .with(
+                                Condition.condition().term(BlockStateProperties.AGE_1, 1),
+                                blockModels.createBambooModels(1)
+                        )
+                        .with(
+                                Condition.condition().term(BlockStateProperties.BAMBOO_LEAVES, BambooLeaves.SMALL),
+                                Variant.variant()
+                                        .with(VariantProperties.MODEL,
+                                                ModelLocationUtils.getModelLocation(Blocks.BAMBOO, "_small_leaves"))
+                        )
+                        .with(
+                                Condition.condition().term(BlockStateProperties.BAMBOO_LEAVES, BambooLeaves.LARGE),
+                                Variant.variant()
+                                        .with(VariantProperties.MODEL,
+                                                ModelLocationUtils.getModelLocation(Blocks.BAMBOO, "_large_leaves"))
+                        )
+        );
+
+        ResourceLocation texture = ResourceLocation.withDefaultNamespace("item/bamboo");
+        ResourceLocation itemModelLocation = ModelLocationUtils.getModelLocation(unboundBamboo);
+        ModelTemplates.FLAT_ITEM.create(itemModelLocation, TextureMapping.layer0(texture), blockModels.modelOutput);
     }
 
     private void registerStandardStairModel(BlockModelGenerators blockModels, Block stair, String textureName) {

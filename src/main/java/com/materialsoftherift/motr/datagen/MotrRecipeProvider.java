@@ -9,6 +9,7 @@ import net.minecraft.data.recipes.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -29,6 +30,56 @@ public class MotrRecipeProvider extends RecipeProvider {
         generateStableBlockRecipes(MotrBlocks.REGISTERED_STABLE_SANDS, getter);
         generateStableBlockRecipes(MotrBlocks.REGISTERED_STABLE_CONCRETE_POWDERS, getter);
         generateStableBlockRecipes(MotrBlocks.REGISTERED_STABLE_ANVILS, getter);
+
+        MotrBlocks.REGISTERED_QUENCHED_BLOCKS.forEach((id, blockInfo) -> {
+            ItemLike quenchedBlock = blockInfo.block().get();
+            ItemLike vanillaBlock = blockInfo.getBaseItem();
+
+            ShapelessRecipeBuilder.shapeless(getter, RecipeCategory.BUILDING_BLOCKS, quenchedBlock, 1)
+                    .requires(vanillaBlock)
+                    .requires(Items.PRISMARINE_CRYSTALS)
+                    .unlockedBy("has_" + id, has(vanillaBlock))
+                    .save(this.output, "quenched_" + id + "_from_prismarine_crystals");
+
+            ShapedRecipeBuilder.shaped(getter, RecipeCategory.BUILDING_BLOCKS, quenchedBlock, 8)
+                    .pattern("###")
+                    .pattern("#W#")
+                    .pattern("###")
+                    .define('#', vanillaBlock)
+                    .define('W', Items.WET_SPONGE)
+                    .unlockedBy("has_" + id, has(vanillaBlock))
+                    .save(this.output, "quenched_" + id + "_from_wet_sponge");
+
+            ShapelessRecipeBuilder.shapeless(getter, RecipeCategory.BUILDING_BLOCKS, vanillaBlock, 1)
+                    .requires(quenchedBlock)
+                    .unlockedBy("has_" + id, has(vanillaBlock))
+                    .save(this.output, id + "_from_quenched");
+        });
+
+        MotrBlocks.REGISTERED_UNBOUND_BLOCKS.forEach((id, blockInfo) -> {
+            ItemLike unboundBlock = blockInfo.block().get();
+            ItemLike vanillaBlock = blockInfo.getBaseItem();
+
+            ShapelessRecipeBuilder.shapeless(getter, RecipeCategory.BUILDING_BLOCKS, unboundBlock, 1)
+                    .requires(vanillaBlock)
+                    .requires(Items.HANGING_ROOTS)
+                    .unlockedBy("has_" + id, has(vanillaBlock))
+                    .save(this.output, "unbound_" + id + "_from_hanging_roots");
+
+            ShapedRecipeBuilder.shaped(getter, RecipeCategory.BUILDING_BLOCKS, unboundBlock, 8)
+                    .pattern("###")
+                    .pattern("#R#")
+                    .pattern("###")
+                    .define('#', vanillaBlock)
+                    .define('R', Blocks.ROOTED_DIRT)
+                    .unlockedBy("has_" + id, has(vanillaBlock))
+                    .save(this.output, "unbound_" + id + "_from_rooted_dirt");
+
+            ShapelessRecipeBuilder.shapeless(getter, RecipeCategory.BUILDING_BLOCKS, vanillaBlock, 1)
+                    .requires(unboundBlock)
+                    .unlockedBy("has_" + id, has(vanillaBlock))
+                    .save(this.output, id + "_from_unbound");
+        });
 
         MotrBlocks.REGISTERED_STANDARD_SLABS.forEach((id, slabInfo) -> ShapedRecipeBuilder
                 .shaped(getter, RecipeCategory.BUILDING_BLOCKS, slabInfo.slab().get(), 6)

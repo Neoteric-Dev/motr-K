@@ -1,5 +1,6 @@
 package com.materialsoftherift.motr.mixin;
 
+import com.materialsoftherift.motr.blocks.stable.StableAnvilBlock;
 import com.materialsoftherift.motr.init.MotrBlocks;
 import net.minecraft.world.level.block.AnvilBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -16,7 +17,7 @@ public class AnvilMenuMixin {
         if (state.is(MotrBlocks.STABLE_ANVIL.block().get()) || state.is(MotrBlocks.STABLE_CHIPPED_ANVIL.block().get())
                 || state.is(MotrBlocks.STABLE_DAMAGED_ANVIL.block().get())) {
 
-            BlockState damagedState = MotrBlocks.StableAnvilBlock.damage(state);
+            BlockState damagedState = StableAnvilBlock.damage(state);
 
             cir.setReturnValue(damagedState);
         }
