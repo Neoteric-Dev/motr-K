@@ -27,25 +27,11 @@ public class ClientModEvents {
         BlockColors blockColors = event.getBlockColors();
 
         MotrBlocks.REGISTERED_UNBOUND_BLOCKS.forEach((name, info) -> {
-//            if (info.baseBlock() instanceof CropBlock) {
-//                event.register((state, getter, pos, tintIndex) ->
-//                    blockColors.getColor(info.baseBlock().defaultBlockState()
-//                        .setValue(CropBlock.AGE, state.getValue(CropBlock.AGE)), getter, pos, tintIndex), info.block().get());
-//                return;
-//            }
-
             event.register((state, getter, pos, tintIndex) -> blockColors.getColor(info.baseBlock().defaultBlockState(),
                     getter, pos, tintIndex), info.block().get());
 
-//            event.register((state, getter, pos, tintIndex) -> -1, info.block().get());
         });
 
-//        event.register((state, getter, pos, tintIndex) -> -1,
-//                MotrBlocks.UNBOUND_WHEAT.block().get(),
-//                MotrBlocks.UNBOUND_CARROTS.block().get(),
-//                MotrBlocks.UNBOUND_POTATOES.block().get(),
-//                MotrBlocks.UNBOUND_BEETROOTS.block().get()
-//        );
     }
 
 }
