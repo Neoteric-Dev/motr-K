@@ -9,11 +9,7 @@ import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.blockstates.PropertyDispatch;
 import net.minecraft.client.data.models.blockstates.Variant;
 import net.minecraft.client.data.models.blockstates.VariantProperties;
-import net.minecraft.client.data.models.model.ItemModelUtils;
-import net.minecraft.client.data.models.model.ModelTemplates;
-import net.minecraft.client.data.models.model.TextureMapping;
-import net.minecraft.client.data.models.model.TextureSlot;
-import net.minecraft.client.data.models.model.TexturedModel;
+import net.minecraft.client.data.models.model.*;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
@@ -23,6 +19,7 @@ import net.neoforged.neoforge.client.model.generators.template.ExtendedModelTemp
 import org.jetbrains.annotations.NotNull;
 
 public class MotrModelProvider extends ModelProvider {
+
     public MotrModelProvider(PackOutput output) {
         super(output, MaterialsOfTheRift.MODID);
     }
@@ -34,17 +31,21 @@ public class MotrModelProvider extends ModelProvider {
                 mapping -> mapping.put(TextureSlot.WOOL, ResourceLocation.withDefaultNamespace("block/hay_block_top"))
         ));
 
-        MotrBlocks.REGISTERED_STANDARD_SLABS.forEach((textureName, slabInfo) -> {
-            registerStandardSlabModel(blockModels, slabInfo.slab().get(), textureName);
-        });
+        MotrBlocks.REGISTERED_STABLE_SANDS.forEach(
+                (texture, blockInfo) -> simpleVanillaModelRedirect(blockModels, blockInfo.block().get(), texture));
+        MotrBlocks.REGISTERED_STABLE_CONCRETE_POWDERS.forEach(
+                (texture, blockInfo) -> simpleVanillaModelRedirect(blockModels, blockInfo.block().get(), texture));
+        MotrBlocks.REGISTERED_STABLE_ANVILS.forEach(
+                (texture, blockInfo) -> anvilVanillaModelRedirect(blockModels, blockInfo.block().get(), texture));
 
-        MotrBlocks.REGISTERED_GLASS_SLABS.forEach((textureId, slabInfo) -> {
-            registerGlassSlabModel(blockModels, slabInfo.slab().get(), textureId);
-        });
+        MotrBlocks.REGISTERED_STANDARD_SLABS.forEach(
+                (textureName, slabInfo) -> registerStandardSlabModel(blockModels, slabInfo.slab().get(), textureName));
 
-        MotrBlocks.REGISTERED_TRIMM_SLABS.forEach((id, slabInfo) -> {
-            registerTrimmSlabModel(blockModels, slabInfo.slab().get(), id, id, id);
-        });
+        MotrBlocks.REGISTERED_GLASS_SLABS.forEach(
+                (textureId, slabInfo) -> registerGlassSlabModel(blockModels, slabInfo.slab().get(), textureId));
+
+        MotrBlocks.REGISTERED_TRIMM_SLABS
+                .forEach((id, slabInfo) -> registerTrimmSlabModel(blockModels, slabInfo.slab().get(), id, id, id));
 
         MotrBlocks.REGISTERED_DIRECTIONAL_SLABS.forEach((id, slabInfo) -> {
             {
@@ -110,21 +111,18 @@ public class MotrModelProvider extends ModelProvider {
             );
         });
 
-        MotrBlocks.REGISTERED_BUTTONS.forEach((textureName, buttonInfo) -> {
-            registerButtonModel(blockModels, itemModels, buttonInfo.button().get(), textureName);
-        });
+        MotrBlocks.REGISTERED_BUTTONS.forEach((textureName, buttonInfo) -> registerButtonModel(blockModels, itemModels,
+                buttonInfo.button().get(), textureName));
 
-        MotrBlocks.REGISTERED_FENCES.forEach((textureName, fenceInfo) -> {
-            registerFenceModel(blockModels, itemModels, fenceInfo.fence().get(), textureName);
-        });
+        MotrBlocks.REGISTERED_FENCES.forEach((textureName, fenceInfo) -> registerFenceModel(blockModels, itemModels,
+                fenceInfo.fence().get(), textureName));
 
-        MotrBlocks.REGISTERED_FENCE_GATES.forEach((textureName, fenceGateInfo) -> {
-            registerFenceGateModel(blockModels, itemModels, fenceGateInfo.fenceGate().get(), textureName);
-        });
+        MotrBlocks.REGISTERED_FENCE_GATES.forEach((textureName, fenceGateInfo) -> registerFenceGateModel(blockModels,
+                itemModels, fenceGateInfo.fenceGate().get(), textureName));
 
-        MotrBlocks.REGISTERED_STANDARD_STAIRS.forEach((textureName, stairInfo) -> {
-            registerStandardStairModel(blockModels, stairInfo.stair().get(), textureName);
-        });
+        MotrBlocks.REGISTERED_STANDARD_STAIRS
+                .forEach((textureName, stairInfo) -> registerStandardStairModel(blockModels, stairInfo.stair().get(),
+                        textureName));
     }
 
     private void registerStandardSlabModel(BlockModelGenerators blockModels, Block slab, String textureName) {
@@ -150,6 +148,24 @@ public class MotrModelProvider extends ModelProvider {
         ResourceLocation outer = ModelTemplates.STAIRS_OUTER.create(stair, mapping, blockModels.modelOutput);
 
         blockModels.blockStateOutput.accept(BlockModelGenerators.createStairs(stair, inner, straight, outer));
+    }
+
+    private void simpleVanillaModelRedirect(BlockModelGenerators blockModels, Block motrBlock, String textureName) {
+        TextureMapping mapping = TextureMapping.cube(ResourceLocation.withDefaultNamespace("block/" + textureName));
+
+        ResourceLocation cube = ModelTemplates.CUBE_ALL.create(motrBlock, mapping, blockModels.modelOutput);
+
+        blockModels.blockStateOutput.accept(BlockModelGenerators.createSimpleBlock(motrBlock, cube));
+    }
+
+    private void anvilVanillaModelRedirect(BlockModelGenerators blockModels, Block motrBlock, String textureName) {
+        TextureMapping mapping = TextureMapping.cube(ResourceLocation.withDefaultNamespace("block/anvil"))
+                .put(TextureSlot.TOP, ResourceLocation.withDefaultNamespace("block/" + textureName + "_top"));
+
+        ResourceLocation anvil = ModelTemplates.ANVIL.create(motrBlock, mapping, blockModels.modelOutput);
+
+        blockModels.blockStateOutput.accept(BlockModelGenerators.createSimpleBlock(motrBlock, anvil)
+                .with(BlockModelGenerators.createHorizontalFacingDispatch()));
     }
 
     private void registerDirectionalSlabModel(
