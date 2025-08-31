@@ -1,15 +1,16 @@
 {
-  "required": true,
-  "minVersion": "0.8",
-  "package": "com.materialsoftherift.motr.mixin",
-  "compatibilityLevel": "JAVA_8",
-  "refmap": "motr.refmap.json",
-  "mixins": [
-    "InvokerBlockBehaviour"
-  ],
-  "client": [
-  ],
-  "injectors": {
-    "defaultRequire": 1
+    "required": true,
+    "minVersion": "0.8",
+    "package": "com.materialsoftherift.motr.mixin",
+    "compatibilityLevel": "JAVA_8",
+    "refmap": "motr.refmap.json",
+    "mixins": [
+        "AnvilMenuMixin",
+        "InvokerBlockBehaviour"
+    ],
+    "client": [
+    ],
+    "injectors": {
+        "defaultRequire": 1
   }
 }

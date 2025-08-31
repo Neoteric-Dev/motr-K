@@ -43,7 +43,17 @@ public class MotrLanguageProvider extends LanguageProvider {
 
         addStairTranslations(MotrBlocks.REGISTERED_STANDARD_STAIRS);
 
+        addStableBlockTranslations(MotrBlocks.REGISTERED_STABLE_SANDS);
+        addStableBlockTranslations(MotrBlocks.REGISTERED_STABLE_CONCRETE_POWDERS);
+        addStableBlockTranslations(MotrBlocks.REGISTERED_STABLE_ANVILS);
+
+        addQuenchedBlockTranslations(MotrBlocks.REGISTERED_QUENCHED_BLOCKS);
+        addUnboundBlockTranslations(MotrBlocks.REGISTERED_UNBOUND_BLOCKS);
+
         add("itemGroup." + MaterialsOfTheRift.MODID, "MOTR");
+        add("item.motr.ignores_gravity", "Ignores Gravity");
+        add("item.motr.does_not_require_water", "Does not require water");
+        add("item.motr.unbound_placement", "Can be placed on any surface");
 
         addBlock(MotrBlocks.HAY_CARPET, "Hay Carpet");
 
@@ -62,6 +72,27 @@ public class MotrLanguageProvider extends LanguageProvider {
             sb.append(" ");
         }
         return sb.toString().trim();
+    }
+
+    private void addStableBlockTranslations(Map<String, MotrBlocks.BlockInfo> blockMap) {
+        blockMap.forEach((baseName, blockInfo) -> {
+            String translation = "Stable " + snakeCaseToCapitalizedCase(baseName);
+            addBlock(blockInfo.block(), translation);
+        });
+    }
+
+    private void addQuenchedBlockTranslations(Map<String, MotrBlocks.QuenchedBlockInfo> blockMap) {
+        blockMap.forEach((baseName, quenchedBlockInfo) -> {
+            String translation = "Quanched " + snakeCaseToCapitalizedCase(baseName);
+            addBlock(quenchedBlockInfo.block(), translation);
+        });
+    }
+
+    private void addUnboundBlockTranslations(Map<String, MotrBlocks.UnboundBlockInfo> blockMap) {
+        blockMap.forEach((baseName, unboundBlockInfo) -> {
+            String translation = "Unbound " + snakeCaseToCapitalizedCase(baseName);
+            addBlock(unboundBlockInfo.block(), translation);
+        });
     }
 
     private void addStairTranslations(Map<String, MotrBlocks.StairInfo> stairMap) {

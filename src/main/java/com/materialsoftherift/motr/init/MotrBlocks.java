@@ -1,21 +1,22 @@
 package com.materialsoftherift.motr.init;
 
 import com.materialsoftherift.motr.MaterialsOfTheRift;
+import com.materialsoftherift.motr.blocks.*;
+import com.materialsoftherift.motr.blocks.quenched.*;
+import com.materialsoftherift.motr.blocks.stable.StableAnvilBlock;
+import com.materialsoftherift.motr.blocks.unbound.*;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.worldgen.features.TreeFeatures;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.ButtonBlock;
-import net.minecraft.world.level.block.CarpetBlock;
-import net.minecraft.world.level.block.FenceBlock;
-import net.minecraft.world.level.block.FenceGateBlock;
-import net.minecraft.world.level.block.SlabBlock;
-import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.grower.TreeGrower;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.WoodType;
+import net.minecraft.world.level.material.MapColor;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -24,56 +25,31 @@ import java.util.function.Supplier;
 
 public class MotrBlocks {
 
-    public static class IceSlabBlock extends SlabBlock {
-        public IceSlabBlock(Properties properties) {
-            super(properties);
-        }
-
-        @Override
-        public float getFriction() {
-            return 0.98f;
-        }
-    }
-
-    public static class SlabInfo {
-        private final DeferredBlock<SlabBlock> slab;
-        private final Block baseBlock;
-
-        public SlabInfo(DeferredBlock<SlabBlock> slab, Block baseBlock) {
-            this.slab = slab;
-            this.baseBlock = baseBlock;
-        }
-
-        public DeferredBlock<SlabBlock> slab() {
-            return slab;
-        }
-
-        public Block baseBlock() {
-            return baseBlock;
-        }
-
+    public record BlockInfo(DeferredBlock<Block> block, Block baseBlock) {
         public Item getBaseItem() {
             return baseBlock.asItem();
         }
     }
 
-    public static class WallInfo {
-        private final DeferredBlock<?> wall;
-        private final Block baseBlock;
-
-        public WallInfo(DeferredBlock<?> wall, Block baseBlock) {
-            this.wall = wall;
-            this.baseBlock = baseBlock;
+    public record QuenchedBlockInfo(DeferredBlock<Block> block, Block baseBlock) {
+        public Item getBaseItem() {
+            return baseBlock.asItem();
         }
+    }
 
-        public DeferredBlock<?> wall() {
-            return wall;
+    public record UnboundBlockInfo(DeferredBlock<Block> block, Block baseBlock) {
+        public Item getBaseItem() {
+            return baseBlock.asItem();
         }
+    }
 
-        public Block baseBlock() {
-            return baseBlock;
+    public record SlabInfo(DeferredBlock<SlabBlock> slab, Block baseBlock) {
+        public Item getBaseItem() {
+            return baseBlock.asItem();
         }
+    }
 
+    public record WallInfo(DeferredBlock<?> wall, Block baseBlock) {
         public Item getBaseItem() {
             return wall.get().asItem();
         }
@@ -83,67 +59,19 @@ public class MotrBlocks {
         }
     }
 
-    public static class ButtonInfo {
-        private final DeferredBlock<ButtonBlock> button;
-        private final Block baseBlock;
-
-        public ButtonInfo(DeferredBlock<ButtonBlock> button, Block baseBlock) {
-            this.button = button;
-            this.baseBlock = baseBlock;
-        }
-
-        public DeferredBlock<ButtonBlock> button() {
-            return button;
-        }
-
-        public Block baseBlock() {
-            return baseBlock;
-        }
-
+    public record ButtonInfo(DeferredBlock<ButtonBlock> button, Block baseBlock) {
         public Item getBaseItem() {
             return baseBlock.asItem();
         }
     }
 
-    public static class FenceInfo {
-        private final DeferredBlock<FenceBlock> fence;
-        private final Block baseBlock;
-
-        public FenceInfo(DeferredBlock<FenceBlock> fence, Block baseBlock) {
-            this.fence = fence;
-            this.baseBlock = baseBlock;
-        }
-
-        public DeferredBlock<FenceBlock> fence() {
-            return fence;
-        }
-
-        public Block baseBlock() {
-            return baseBlock;
-        }
-
+    public record FenceInfo(DeferredBlock<FenceBlock> fence, Block baseBlock) {
         public Item getBaseItem() {
             return baseBlock.asItem();
         }
     }
 
-    public static class FenceGateInfo {
-        private final DeferredBlock<FenceGateBlock> fenceGate;
-        private final Block baseBlock;
-
-        public FenceGateInfo(DeferredBlock<FenceGateBlock> fenceGate, Block baseBlock) {
-            this.fenceGate = fenceGate;
-            this.baseBlock = baseBlock;
-        }
-
-        public DeferredBlock<FenceGateBlock> fenceGate() {
-            return fenceGate;
-        }
-
-        public Block baseBlock() {
-            return baseBlock;
-        }
-
+    public record FenceGateInfo(DeferredBlock<FenceGateBlock> fenceGate, Block baseBlock) {
         public Item getBaseItem() {
             return baseBlock.asItem();
         }
@@ -153,29 +81,373 @@ public class MotrBlocks {
         }
     }
 
-    public static class StairInfo {
-        private final DeferredBlock<StairBlock> stair;
-        private final Block baseBlock;
-
-        public StairInfo(DeferredBlock<StairBlock> stair, Block baseBlock) {
-            this.stair = stair;
-            this.baseBlock = baseBlock;
-        }
-
-        public DeferredBlock<StairBlock> stair() {
-            return stair;
-        }
-
-        public Block baseBlock() {
-            return baseBlock;
-        }
-
+    public record StairInfo(DeferredBlock<StairBlock> stair, Block baseBlock) {
         public Item getBaseItem() {
             return baseBlock.asItem();
         }
     }
 
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MaterialsOfTheRift.MODID);
+
+    public static final QuenchedBlockInfo QUENCHED_KELP = registerQuenchedBlock("quenched_kelp", Blocks.KELP,
+            () -> new QuenchedKelpBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.KELP).setId(blockId("quenched_kelp"))));
+    public static final QuenchedBlockInfo QUENCHED_SEAGRASS = registerQuenchedBlock("quenched_seagrass",
+            Blocks.SEAGRASS, () -> new QuenchedSeagrassBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.SEAGRASS).setId(blockId("quenched_seagrass"))));
+    public static final QuenchedBlockInfo QUENCHED_SEA_PICKLE = registerQuenchedBlock("quenched_sea_pickle",
+            Blocks.SEA_PICKLE, () -> new QuenchedSeaPickleBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.SEA_PICKLE).setId(blockId("quenched_sea_pickle"))));
+    public static final QuenchedBlockInfo QUENCHED_TUBE_CORAL = registerQuenchedBlock("quenched_tube_coral",
+            Blocks.TUBE_CORAL_BLOCK,
+            () -> new QuenchedCoralBlock(Blocks.DEAD_TUBE_CORAL_BLOCK,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.TUBE_CORAL_BLOCK)
+                            .setId(blockId("quenched_tube_coral"))));
+    public static final QuenchedBlockInfo QUENCHED_BRAIN_CORAL = registerQuenchedBlock("quenched_brain_coral",
+            Blocks.BRAIN_CORAL_BLOCK,
+            () -> new QuenchedCoralBlock(Blocks.DEAD_BRAIN_CORAL_BLOCK,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.BRAIN_CORAL_BLOCK)
+                            .setId(blockId("quenched_brain_coral"))));
+    public static final QuenchedBlockInfo QUENCHED_BUBBLE_CORAL = registerQuenchedBlock("quenched_bubble_coral",
+            Blocks.BUBBLE_CORAL_BLOCK,
+            () -> new QuenchedCoralBlock(Blocks.DEAD_BUBBLE_CORAL_BLOCK,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.BUBBLE_CORAL_BLOCK)
+                            .setId(blockId("quenched_bubble_coral"))));
+    public static final QuenchedBlockInfo QUENCHED_FIRE_CORAL = registerQuenchedBlock("quenched_fire_coral",
+            Blocks.FIRE_CORAL_BLOCK,
+            () -> new QuenchedCoralBlock(Blocks.DEAD_FIRE_CORAL_BLOCK,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.FIRE_CORAL_BLOCK)
+                            .setId(blockId("quenched_fire_coral"))));
+    public static final QuenchedBlockInfo QUENCHED_HORN_CORAL = registerQuenchedBlock("quenched_horn_coral",
+            Blocks.HORN_CORAL_BLOCK,
+            () -> new QuenchedCoralBlock(Blocks.DEAD_HORN_CORAL_BLOCK,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.HORN_CORAL_BLOCK)
+                            .setId(blockId("quenched_horn_coral"))));
+    public static final QuenchedBlockInfo QUENCHED_TUBE_CORAL_FAN = registerQuenchedBlock("quenched_tube_coral_fan",
+            Blocks.TUBE_CORAL_FAN,
+            () -> new QuenchedCoralFanBlock(Blocks.TUBE_CORAL_FAN,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.TUBE_CORAL_FAN)
+                            .setId(blockId("quenched_tube_coral_fan"))));
+    public static final QuenchedBlockInfo QUENCHED_BRAIN_CORAL_FAN = registerQuenchedBlock("quenched_brain_coral_fan",
+            Blocks.BRAIN_CORAL_FAN,
+            () -> new QuenchedCoralFanBlock(Blocks.BRAIN_CORAL_FAN,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.BRAIN_CORAL_FAN)
+                            .setId(blockId("quenched_brain_coral_fan"))));
+    public static final QuenchedBlockInfo QUENCHED_BUBBLE_CORAL_FAN = registerQuenchedBlock("quenched_bubble_coral_fan",
+            Blocks.BUBBLE_CORAL_FAN,
+            () -> new QuenchedCoralFanBlock(Blocks.BUBBLE_CORAL_FAN,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.BUBBLE_CORAL_FAN)
+                            .setId(blockId("quenched_bubble_coral_fan"))));
+    public static final QuenchedBlockInfo QUENCHED_FIRE_CORAL_FAN = registerQuenchedBlock("quenched_fire_coral_fan",
+            Blocks.FIRE_CORAL_FAN,
+            () -> new QuenchedCoralFanBlock(Blocks.FIRE_CORAL_FAN,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.FIRE_CORAL_FAN)
+                            .setId(blockId("quenched_fire_coral_fan"))));
+    public static final QuenchedBlockInfo QUENCHED_HORN_CORAL_FAN = registerQuenchedBlock("quenched_horn_coral_fan",
+            Blocks.HORN_CORAL_FAN,
+            () -> new QuenchedCoralFanBlock(Blocks.HORN_CORAL_FAN,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.HORN_CORAL_FAN)
+                            .setId(blockId("quenched_horn_coral_fan"))));
+    public static final QuenchedBlockInfo QUENCHED_FARMLAND = registerQuenchedBlock("quenched_farmland",
+            Blocks.FARMLAND, () -> new QuenchedFarmlandBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.FARMLAND).setId(blockId("quenched_farmland"))));
+    public static final QuenchedBlockInfo QUENCHED_SUGAR_CANE = registerQuenchedBlock("quenched_sugar_cane",
+            Blocks.SUGAR_CANE, () -> new QuenchedSugarCaneBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.SUGAR_CANE).setId(blockId("quenched_sugar_cane"))));
+
+    public static final Map<String, QuenchedBlockInfo> REGISTERED_QUENCHED_BLOCKS = Map.ofEntries(
+            Map.entry("kelp", QUENCHED_KELP), Map.entry("seagrass", QUENCHED_SEAGRASS),
+            Map.entry("sea_pickle", QUENCHED_SEA_PICKLE), Map.entry("tube_coral", QUENCHED_TUBE_CORAL),
+            Map.entry("brain_coral", QUENCHED_BRAIN_CORAL), Map.entry("bubble_coral", QUENCHED_BUBBLE_CORAL),
+            Map.entry("fire_coral", QUENCHED_FIRE_CORAL), Map.entry("horn_coral", QUENCHED_HORN_CORAL),
+            Map.entry("tube_coral_fan", QUENCHED_TUBE_CORAL_FAN),
+            Map.entry("brain_coral_fan", QUENCHED_BRAIN_CORAL_FAN),
+            Map.entry("bubble_coral_fan", QUENCHED_BUBBLE_CORAL_FAN),
+            Map.entry("fire_coral_fan", QUENCHED_FIRE_CORAL_FAN), Map.entry("horn_coral_fan", QUENCHED_HORN_CORAL_FAN),
+            Map.entry("farmland", QUENCHED_FARMLAND), Map.entry("sugar_cane", QUENCHED_SUGAR_CANE)
+    );
+
+    public static final UnboundBlockInfo UNBOUND_WHEAT = registerUnboundBlock("unbound_wheat", Blocks.WHEAT,
+            () -> new UnboundCropBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.WHEAT)
+                    .mapColor(MapColor.NONE)
+                    .setId(blockId("unbound_wheat"))));
+    public static final UnboundBlockInfo UNBOUND_CARROTS = registerUnboundBlock("unbound_carrots", Blocks.CARROTS,
+            () -> new UnboundCropBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.CARROTS).setId(blockId("unbound_carrots"))));
+    public static final UnboundBlockInfo UNBOUND_POTATOES = registerUnboundBlock("unbound_potatoes", Blocks.POTATOES,
+            () -> new UnboundCropBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.POTATOES).setId(blockId("unbound_potatoes"))));
+    public static final UnboundBlockInfo UNBOUND_BEETROOTS = registerUnboundBlock("unbound_beetroots", Blocks.BEETROOTS,
+            () -> new UnboundBeetrootBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.BEETROOTS).setId(blockId("unbound_beetroots"))));
+    public static final UnboundBlockInfo UNBOUND_BROWN_MUSHROOM = registerUnboundBlock("unbound_brown_mushroom",
+            Blocks.BROWN_MUSHROOM,
+            () -> new UnboundMushroomBlock(TreeFeatures.HUGE_BROWN_MUSHROOM,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.BROWN_MUSHROOM)
+                            .setId(blockId("unbound_brown_mushroom"))));
+    public static final UnboundBlockInfo UNBOUND_RED_MUSHROOM = registerUnboundBlock("unbound_red_mushroom",
+            Blocks.RED_MUSHROOM, () -> new UnboundMushroomBlock(TreeFeatures.HUGE_RED_MUSHROOM,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.RED_MUSHROOM).setId(blockId("unbound_red_mushroom"))));
+    public static final UnboundBlockInfo UNBOUND_NETHER_WART = registerUnboundBlock("unbound_nether_wart",
+            Blocks.NETHER_WART, () -> new UnboundNetherWartBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.NETHER_WART).setId(blockId("unbound_nether_wart"))));
+    public static final UnboundBlockInfo UNBOUND_OAK_SAPLING = registerUnboundBlock("unbound_oak_sapling",
+            Blocks.OAK_SAPLING, () -> new UnboundSaplingBlock(TreeGrower.OAK,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SAPLING).setId(blockId("unbound_oak_sapling"))));
+    public static final UnboundBlockInfo UNBOUND_SPRUCE_SAPLING = registerUnboundBlock("unbound_spruce_sapling",
+            Blocks.SPRUCE_SAPLING,
+            () -> new UnboundSaplingBlock(TreeGrower.SPRUCE, BlockBehaviour.Properties.ofFullCopy(Blocks.SPRUCE_SAPLING)
+                    .setId(blockId("unbound_spruce_sapling"))));
+    public static final UnboundBlockInfo UNBOUND_BIRCH_SAPLING = registerUnboundBlock("unbound_birch_sapling",
+            Blocks.BIRCH_SAPLING,
+            () -> new UnboundSaplingBlock(TreeGrower.BIRCH, BlockBehaviour.Properties.ofFullCopy(Blocks.BIRCH_SAPLING)
+                    .setId(blockId("unbound_birch_sapling"))));
+    public static final UnboundBlockInfo UNBOUND_JUNGLE_SAPLING = registerUnboundBlock("unbound_jungle_sapling",
+            Blocks.JUNGLE_SAPLING,
+            () -> new UnboundSaplingBlock(TreeGrower.JUNGLE, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_SAPLING)
+                    .setId(blockId("unbound_jungle_sapling"))));
+    public static final UnboundBlockInfo UNBOUND_ACACIA_SAPLING = registerUnboundBlock("unbound_acacia_sapling",
+            Blocks.ACACIA_SAPLING,
+            () -> new UnboundSaplingBlock(TreeGrower.ACACIA, BlockBehaviour.Properties.ofFullCopy(Blocks.ACACIA_SAPLING)
+                    .setId(blockId("unbound_acacia_sapling"))));
+    public static final UnboundBlockInfo UNBOUND_DARK_OAK_SAPLING = registerUnboundBlock("unbound_dark_oak_sapling",
+            Blocks.DARK_OAK_SAPLING,
+            () -> new UnboundSaplingBlock(TreeGrower.DARK_OAK,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.DARK_OAK_SAPLING)
+                            .setId(blockId("unbound_dark_oak_sapling"))));
+    public static final UnboundBlockInfo UNBOUND_MANGROVE_PROPAGULE = registerUnboundBlock("unbound_mangrove_propagule",
+            Blocks.MANGROVE_PROPAGULE,
+            () -> new UnboundSaplingBlock(TreeGrower.MANGROVE,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.MANGROVE_PROPAGULE)
+                            .setId(blockId("unbound_mangrove_propagule"))));
+    public static final UnboundBlockInfo UNBOUND_CHERRY_SAPLING = registerUnboundBlock("unbound_cherry_sapling",
+            Blocks.CHERRY_SAPLING,
+            () -> new UnboundSaplingBlock(TreeGrower.CHERRY, BlockBehaviour.Properties.ofFullCopy(Blocks.CHERRY_SAPLING)
+                    .setId(blockId("unbound_cherry_sapling"))));
+//    public static final UnboundBlockInfo UNBOUND_POTTED_OAK_SAPLING = registerUnboundBlock("unbound_potted_oak_sapling",
+//            Blocks.POTTED_OAK_SAPLING,
+//            () -> new UnboundSaplingBlock(TreeGrower.OAK, BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_OAK_SAPLING).setId(blockId("unbound_potted_oak_sapling"))));
+//    public static final UnboundBlockInfo UNBOUND_POTTED_SPRUCE_SAPLING = registerUnboundBlock("unbound_potted_spruce_sapling",
+//            Blocks.POTTED_SPRUCE_SAPLING, () -> new FlowerPotBlock(() -> (FlowerPotBlock)Blocks.FLOWER_POT, () -> UNBOUND_SPRUCE_SAPLING.block().get(),
+//                    BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_SPRUCE_SAPLING).setId(blockId("unbound_potted_spruce_sapling"))));
+//    public static final UnboundBlockInfo UNBOUND_POTTED_BIRCH_SAPLING = registerUnboundBlock("unbound_potted_birch_sapling",
+//            Blocks.POTTED_BIRCH_SAPLING, () -> new FlowerPotBlock(() -> (FlowerPotBlock)Blocks.FLOWER_POT, () -> UNBOUND_BIRCH_SAPLING.block().get(),
+//                    BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_BIRCH_SAPLING).setId(blockId("unbound_potted_birch_sapling"))));
+//    public static final UnboundBlockInfo UNBOUND_POTTED_JUNGLE_SAPLING = registerUnboundBlock("unbound_potted_jungle_sapling",
+//            Blocks.POTTED_JUNGLE_SAPLING, () -> new FlowerPotBlock(() -> (FlowerPotBlock)Blocks.FLOWER_POT, () -> UNBOUND_JUNGLE_SAPLING.block().get(),
+//                    BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_JUNGLE_SAPLING).setId(blockId("unbound_potted_jungle_sapling"))));
+//    public static final UnboundBlockInfo UNBOUND_POTTED_ACACIA_SAPLING = registerUnboundBlock("unbound_potted_acacia_sapling",
+//            Blocks.POTTED_ACACIA_SAPLING, () -> new FlowerPotBlock(() -> (FlowerPotBlock)Blocks.FLOWER_POT, () -> UNBOUND_ACACIA_SAPLING.block().get(),
+//                    BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_ACACIA_SAPLING).setId(blockId("unbound_potted_acacia_sapling"))));
+//    public static final UnboundBlockInfo UNBOUND_POTTED_DARK_OAK_SAPLING = registerUnboundBlock("unbound_potted_dark_oak_sapling",
+//            Blocks.POTTED_DARK_OAK_SAPLING, () -> new FlowerPotBlock(() -> (FlowerPotBlock)Blocks.FLOWER_POT, () -> UNBOUND_DARK_OAK_SAPLING.block().get(),
+//                    BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_DARK_OAK_SAPLING).setId(blockId("unbound_potted_dark_oak_sapling"))));
+//    public static final UnboundBlockInfo UNBOUND_POTTED_MANGROVE_PROPAGULE = registerUnboundBlock("unbound_potted_mangrove_propagule",
+//            Blocks.POTTED_MANGROVE_PROPAGULE, () -> new FlowerPotBlock(() -> (FlowerPotBlock)Blocks.FLOWER_POT, () -> UNBOUND_MANGROVE_PROPAGULE.block().get(),
+//                    BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_MANGROVE_PROPAGULE).setId(blockId("unbound_potted_mangrove_propagule"))));
+//    public static final UnboundBlockInfo UNBOUND_POTTED_CHERRY_SAPLING = registerUnboundBlock("unbound_potted_cherry_sapling",
+//            Blocks.POTTED_CHERRY_SAPLING, () -> new FlowerPotBlock(() -> (FlowerPotBlock)Blocks.FLOWER_POT, () -> UNBOUND_CHERRY_SAPLING.block().get(),
+//                    BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_CHERRY_SAPLING).setId(blockId("unbound_potted_cherry_sapling"))));
+    public static final UnboundBlockInfo UNBOUND_SHORT_GRASS = registerUnboundBlock("unbound_short_grass",
+            Blocks.SHORT_GRASS, () -> new UnboundTallGrassBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.SHORT_GRASS).setId(blockId("unbound_short_grass"))));
+    public static final UnboundBlockInfo UNBOUND_TALL_GRASS = registerUnboundBlock("unbound_tall_grass",
+            Blocks.TALL_GRASS, () -> new UnboundDoublePlantBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.TALL_GRASS).setId(blockId("unbound_tall_grass"))));
+    public static final UnboundBlockInfo UNBOUND_FERN = registerUnboundBlock("unbound_fern", Blocks.FERN,
+            () -> new UnboundTallGrassBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.FERN).setId(blockId("unbound_fern"))));
+    public static final UnboundBlockInfo UNBOUND_LARGE_FERN = registerUnboundBlock("unbound_large_fern",
+            Blocks.LARGE_FERN, () -> new UnboundDoublePlantBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.LARGE_FERN).setId(blockId("unbound_large_fern"))));
+    public static final UnboundBlockInfo UNBOUND_DANDELION = registerUnboundBlock("unbound_dandelion", Blocks.DANDELION,
+            () -> new UnboundFlowerBlock(MobEffects.SATURATION, 0.35F,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION).setId(blockId("unbound_dandelion"))));
+    public static final UnboundBlockInfo UNBOUND_TORCHFLOWER = registerUnboundBlock("unbound_torchflower",
+            Blocks.TORCHFLOWER, () -> new UnboundFlowerBlock(MobEffects.NIGHT_VISION, 5.0F,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION).setId(blockId("unbound_torchflower"))));
+    public static final UnboundBlockInfo UNBOUND_POPPY = registerUnboundBlock("unbound_poppy", Blocks.POPPY,
+            () -> new UnboundFlowerBlock(MobEffects.NIGHT_VISION, 5.0F,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.POPPY).setId(blockId("unbound_poppy"))));
+    public static final UnboundBlockInfo UNBOUND_BLUE_ORCHID = registerUnboundBlock("unbound_blue_orchid",
+            Blocks.BLUE_ORCHID, () -> new UnboundFlowerBlock(MobEffects.SATURATION, 0.35F,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.BLUE_ORCHID).setId(blockId("unbound_blue_orchid"))));
+    public static final UnboundBlockInfo UNBOUND_ALLIUM = registerUnboundBlock("unbound_allium", Blocks.ALLIUM,
+            () -> new UnboundFlowerBlock(MobEffects.FIRE_RESISTANCE, 3.0F,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.ALLIUM).setId(blockId("unbound_allium"))));
+    public static final UnboundBlockInfo UNBOUND_AZURE_BLUET = registerUnboundBlock("unbound_azure_bluet",
+            Blocks.AZURE_BLUET, () -> new UnboundFlowerBlock(MobEffects.BLINDNESS, 11.0F,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.AZURE_BLUET).setId(blockId("unbound_azure_bluet"))));
+    public static final UnboundBlockInfo UNBOUND_RED_TULIP = registerUnboundBlock("unbound_red_tulip", Blocks.RED_TULIP,
+            () -> new UnboundFlowerBlock(MobEffects.WEAKNESS, 7.0F,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.RED_TULIP).setId(blockId("unbound_red_tulip"))));
+    public static final UnboundBlockInfo UNBOUND_ORANGE_TULIP = registerUnboundBlock("unbound_orange_tulip",
+            Blocks.ORANGE_TULIP, () -> new UnboundFlowerBlock(MobEffects.WEAKNESS, 7.0F,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.ORANGE_TULIP).setId(blockId("unbound_orange_tulip"))));
+    public static final UnboundBlockInfo UNBOUND_WHITE_TULIP = registerUnboundBlock("unbound_white_tulip",
+            Blocks.WHITE_TULIP, () -> new UnboundFlowerBlock(MobEffects.WEAKNESS, 7.0F,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.WHITE_TULIP).setId(blockId("unbound_white_tulip"))));
+    public static final UnboundBlockInfo UNBOUND_PINK_TULIP = registerUnboundBlock("unbound_pink_tulip",
+            Blocks.PINK_TULIP, () -> new UnboundFlowerBlock(MobEffects.WEAKNESS, 7.0F,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.PINK_TULIP).setId(blockId("unbound_pink_tulip"))));
+    public static final UnboundBlockInfo UNBOUND_OXEYE_DAISY = registerUnboundBlock("unbound_oxeye_daisy",
+            Blocks.OXEYE_DAISY, () -> new UnboundFlowerBlock(MobEffects.REGENERATION, 7.0F,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.OXEYE_DAISY).setId(blockId("unbound_oxeye_daisy"))));
+    public static final UnboundBlockInfo UNBOUND_CORNFLOWER = registerUnboundBlock("unbound_cornflower",
+            Blocks.CORNFLOWER, () -> new UnboundFlowerBlock(MobEffects.JUMP, 5.0F,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.CORNFLOWER).setId(blockId("unbound_cornflower"))));
+    public static final UnboundBlockInfo UNBOUND_LILY_OF_THE_VALLEY = registerUnboundBlock("unbound_lily_of_the_valley",
+            Blocks.LILY_OF_THE_VALLEY,
+            () -> new UnboundWitherRoseBlock(MobEffects.POISON, 11.0F,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.LILY_OF_THE_VALLEY)
+                            .setId(blockId("unbound_lily_of_the_valley"))));
+    public static final UnboundBlockInfo UNBOUND_WITHER_ROSE = registerUnboundBlock("unbound_wither_rose",
+            Blocks.WITHER_ROSE, () -> new UnboundFlowerBlock(MobEffects.WITHER, 7.0F,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.WITHER_ROSE).setId(blockId("unbound_wither_rose"))));
+    public static final UnboundBlockInfo UNBOUND_SUNFLOWER = registerUnboundBlock("unbound_sunflower", Blocks.SUNFLOWER,
+            () -> new UnboundTallFlowerBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.SUNFLOWER).setId(blockId("unbound_sunflower"))));
+    public static final UnboundBlockInfo UNBOUND_LILAC = registerUnboundBlock("unbound_lilac", Blocks.LILAC,
+            () -> new UnboundDoublePlantBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.LILAC).setId(blockId("unbound_lilac"))));
+    public static final UnboundBlockInfo UNBOUND_ROSE_BUSH = registerUnboundBlock("unbound_rose_bush", Blocks.ROSE_BUSH,
+            () -> new UnboundDoublePlantBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.ROSE_BUSH).setId(blockId("unbound_rose_bush"))));
+    public static final UnboundBlockInfo UNBOUND_PEONY = registerUnboundBlock("unbound_peony", Blocks.PEONY,
+            () -> new UnboundTallFlowerBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.PEONY).setId(blockId("unbound_peony"))));
+    public static final UnboundBlockInfo UNBOUND_SWEET_BERRY_BUSH = registerUnboundBlock("unbound_sweet_berry_bush",
+            Blocks.SWEET_BERRY_BUSH,
+            () -> new UnboundSweetBerryBushBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SWEET_BERRY_BUSH)
+                    .setId(blockId("unbound_sweet_berry_bush"))));
+    public static final UnboundBlockInfo UNBOUND_BAMBOO = registerUnboundBlock("unbound_bamboo", Blocks.BAMBOO,
+            () -> new UnboundBambooBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BAMBOO)
+                    .dynamicShape()
+                    .setId(blockId("unbound_bamboo"))));
+    public static final UnboundBlockInfo UNBOUND_CRIMSON_FUNGUS = registerUnboundBlock("unbound_crimson_fungus",
+            Blocks.CRIMSON_FUNGUS,
+            () -> new UnboundFungusBlock(TreeFeatures.CRIMSON_FUNGUS_PLANTED, Blocks.CRIMSON_FUNGUS,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.CRIMSON_FUNGUS)
+                            .setId(blockId("unbound_crimson_fungus"))));
+    public static final UnboundBlockInfo UNBOUND_WARPED_FUNGUS = registerUnboundBlock("unbound_warped_fungus",
+            Blocks.WARPED_FUNGUS,
+            () -> new UnboundFungusBlock(TreeFeatures.WARPED_FUNGUS_PLANTED, Blocks.WARPED_FUNGUS,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.WARPED_FUNGUS)
+                            .setId(blockId("unbound_warped_fungus"))));
+    public static final UnboundBlockInfo UNBOUND_CACTUS = registerUnboundBlock("unbound_cactus", Blocks.CACTUS,
+            () -> new UnboundCactusBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.CACTUS).setId(blockId("unbound_cactus"))));
+    public static final UnboundBlockInfo UNBOUND_POINTED_DRIPSTONE = registerUnboundBlock("unbound_pointed_dripstone",
+            Blocks.POINTED_DRIPSTONE,
+            () -> new UnboundPointedDripstoneBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.POINTED_DRIPSTONE)
+                    .setId(blockId("unbound_pointed_dripstone"))));
+    public static final UnboundBlockInfo UNBOUND_GLOW_LICHEN = registerUnboundBlock("unbound_glow_lichen",
+            Blocks.GLOW_LICHEN, () -> new UnboundGlowLichenBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.GLOW_LICHEN).setId(blockId("unbound_glow_lichen"))));
+
+    public static final Map<String, UnboundBlockInfo> REGISTERED_UNBOUND_BLOCKS = Map.ofEntries(
+            Map.entry("wheat", UNBOUND_WHEAT), Map.entry("carrots", UNBOUND_CARROTS),
+            Map.entry("potatoes", UNBOUND_POTATOES), Map.entry("beetroots", UNBOUND_BEETROOTS),
+            Map.entry("brown_mushroom", UNBOUND_BROWN_MUSHROOM), Map.entry("red_mushroom", UNBOUND_RED_MUSHROOM),
+            Map.entry("nether_wart", UNBOUND_NETHER_WART), Map.entry("oak_sapling", UNBOUND_OAK_SAPLING),
+            Map.entry("spruce_sapling", UNBOUND_SPRUCE_SAPLING), Map.entry("birch_sapling", UNBOUND_BIRCH_SAPLING),
+            Map.entry("jungle_sapling", UNBOUND_JUNGLE_SAPLING), Map.entry("acacia_sapling", UNBOUND_ACACIA_SAPLING),
+            Map.entry("dark_oak_sapling", UNBOUND_DARK_OAK_SAPLING),
+            Map.entry("mangrove_propagule", UNBOUND_MANGROVE_PROPAGULE),
+//            Map.entry("potted_oak_sapling", UNBOUND_POTTED_OAK_SAPLING),
+//            Map.entry("potted_spruce_sapling", UNBOUND_POTTED_SPRUCE_SAPLING),
+//            Map.entry("potted_birch_sapling", UNBOUND_POTTED_BIRCH_SAPLING),
+//            Map.entry("potted_jungle_sapling", UNBOUND_POTTED_JUNGLE_SAPLING),
+//            Map.entry("potted_acacia_sapling", UNBOUND_POTTED_ACACIA_SAPLING),
+//            Map.entry("potted_dark_oak_sapling", UNBOUND_POTTED_DARK_OAK_SAPLING),
+//            Map.entry("potted_mangrove_propagule", UNBOUND_POTTED_MANGROVE_PROPAGULE),
+//            Map.entry("potted_cherry_propagule", UNBOUND_POTTED_CHERRY_SAPLING),
+            Map.entry("cherry_sapling", UNBOUND_CHERRY_SAPLING), Map.entry("short_grass", UNBOUND_SHORT_GRASS),
+            Map.entry("tall_grass", UNBOUND_TALL_GRASS), Map.entry("fern", UNBOUND_FERN),
+            Map.entry("large_fern", UNBOUND_LARGE_FERN), Map.entry("dandelion", UNBOUND_DANDELION),
+            Map.entry("torchflower", UNBOUND_TORCHFLOWER), Map.entry("poppy", UNBOUND_POPPY),
+            Map.entry("blue_orchid", UNBOUND_BLUE_ORCHID), Map.entry("allium", UNBOUND_ALLIUM),
+            Map.entry("azure_bluet", UNBOUND_AZURE_BLUET), Map.entry("red_tulip", UNBOUND_RED_TULIP),
+            Map.entry("orange_tulip", UNBOUND_ORANGE_TULIP), Map.entry("white_tulip", UNBOUND_WHITE_TULIP),
+            Map.entry("pink_tulip", UNBOUND_PINK_TULIP), Map.entry("oxeye_daisy", UNBOUND_OXEYE_DAISY),
+            Map.entry("cornflower", UNBOUND_CORNFLOWER), Map.entry("lily_of_the_valley", UNBOUND_LILY_OF_THE_VALLEY),
+            Map.entry("wither_rose", UNBOUND_WITHER_ROSE), Map.entry("sunflower", UNBOUND_SUNFLOWER),
+            Map.entry("lilac", UNBOUND_LILAC), Map.entry("rose_bush", UNBOUND_ROSE_BUSH),
+            Map.entry("peony", UNBOUND_PEONY), Map.entry("sweet_berry_bush", UNBOUND_SWEET_BERRY_BUSH),
+            Map.entry("bamboo", UNBOUND_BAMBOO), Map.entry("crimson_fungus", UNBOUND_CRIMSON_FUNGUS),
+            Map.entry("warped_fungus", UNBOUND_WARPED_FUNGUS), Map.entry("cactus", UNBOUND_CACTUS),
+            Map.entry("pointed_dripstone", UNBOUND_POINTED_DRIPSTONE), Map.entry("glow_lichen", UNBOUND_GLOW_LICHEN)
+    );
+
+    public static final BlockInfo STABLE_SAND = registerStableBlock("stable_sand", Blocks.SAND);
+    public static final BlockInfo STABLE_RED_SAND = registerStableBlock("stable_red_sand", Blocks.RED_SAND);
+
+    public static final BlockInfo STABLE_WHITE_CONCRETE_POWDER = registerStableBlock("stable_white_concrete_powder",
+            Blocks.WHITE_CONCRETE_POWDER);
+    public static final BlockInfo STABLE_LIGHT_GRAY_CONCRETE_POWDER = registerStableBlock(
+            "stable_light_gray_concrete_powder", Blocks.LIGHT_GRAY_CONCRETE_POWDER);
+    public static final BlockInfo STABLE_GRAY_CONCRETE_POWDER = registerStableBlock("stable_gray_concrete_powder",
+            Blocks.GRAY_CONCRETE_POWDER);
+    public static final BlockInfo STABLE_BLACK_CONCRETE_POWDER = registerStableBlock("stable_black_concrete_powder",
+            Blocks.BLACK_CONCRETE_POWDER);
+    public static final BlockInfo STABLE_BROWN_CONCRETE_POWDER = registerStableBlock("stable_brown_concrete_powder",
+            Blocks.BROWN_CONCRETE_POWDER);
+    public static final BlockInfo STABLE_RED_CONCRETE_POWDER = registerStableBlock("stable_red_concrete_powder",
+            Blocks.RED_CONCRETE_POWDER);
+    public static final BlockInfo STABLE_ORANGE_CONCRETE_POWDER = registerStableBlock("stable_orange_concrete_powder",
+            Blocks.ORANGE_CONCRETE_POWDER);
+    public static final BlockInfo STABLE_YELLOW_CONCRETE_POWDER = registerStableBlock("stable_yellow_concrete_powder",
+            Blocks.YELLOW_CONCRETE_POWDER);
+    public static final BlockInfo STABLE_LIME_CONCRETE_POWDER = registerStableBlock("stable_lime_concrete_powder",
+            Blocks.LIME_CONCRETE_POWDER);
+    public static final BlockInfo STABLE_GREEN_CONCRETE_POWDER = registerStableBlock("stable_green_concrete_powder",
+            Blocks.GREEN_CONCRETE_POWDER);
+    public static final BlockInfo STABLE_CYAN_CONCRETE_POWDER = registerStableBlock("stable_cyan_concrete_powder",
+            Blocks.CYAN_CONCRETE_POWDER);
+    public static final BlockInfo STABLE_LIGHT_BLUE_CONCRETE_POWDER = registerStableBlock(
+            "stable_light_blue_concrete_powder", Blocks.LIGHT_BLUE_CONCRETE_POWDER);
+    public static final BlockInfo STABLE_BLUE_CONCRETE_POWDER = registerStableBlock("stable_blue_concrete_powder",
+            Blocks.BLUE_CONCRETE_POWDER);
+    public static final BlockInfo STABLE_PURPLE_CONCRETE_POWDER = registerStableBlock("stable_purple_concrete_powder",
+            Blocks.PURPLE_CONCRETE_POWDER);
+    public static final BlockInfo STABLE_MAGENTA_CONCRETE_POWDER = registerStableBlock("stable_magenta_concrete_powder",
+            Blocks.MAGENTA_CONCRETE_POWDER);
+    public static final BlockInfo STABLE_PINK_CONCRETE_POWDER = registerStableBlock("stable_pink_concrete_powder",
+            Blocks.PINK_CONCRETE_POWDER);
+
+    public static final BlockInfo STABLE_ANVIL = registerStableAnvilBlock("stable_anvil", Blocks.ANVIL);
+    public static final BlockInfo STABLE_CHIPPED_ANVIL = registerStableAnvilBlock("chipped_stable_anvil",
+            Blocks.CHIPPED_ANVIL);
+    public static final BlockInfo STABLE_DAMAGED_ANVIL = registerStableAnvilBlock("damaged_stable_anvil",
+            Blocks.DAMAGED_ANVIL);
+
+    public static final Map<String, BlockInfo> REGISTERED_STABLE_SANDS = Map.ofEntries(
+            Map.entry("sand", STABLE_SAND), Map.entry("red_sand", STABLE_RED_SAND)
+    );
+
+    public static final Map<String, BlockInfo> REGISTERED_STABLE_CONCRETE_POWDERS = Map.ofEntries(
+            Map.entry("white_concrete_powder", STABLE_WHITE_CONCRETE_POWDER),
+            Map.entry("light_gray_concrete_powder", STABLE_LIGHT_GRAY_CONCRETE_POWDER),
+            Map.entry("gray_concrete_powder", STABLE_GRAY_CONCRETE_POWDER),
+            Map.entry("black_concrete_powder", STABLE_BLACK_CONCRETE_POWDER),
+            Map.entry("brown_concrete_powder", STABLE_BROWN_CONCRETE_POWDER),
+            Map.entry("red_concrete_powder", STABLE_RED_CONCRETE_POWDER),
+            Map.entry("orange_concrete_powder", STABLE_ORANGE_CONCRETE_POWDER),
+            Map.entry("yellow_concrete_powder", STABLE_YELLOW_CONCRETE_POWDER),
+            Map.entry("lime_concrete_powder", STABLE_LIME_CONCRETE_POWDER),
+            Map.entry("green_concrete_powder", STABLE_GREEN_CONCRETE_POWDER),
+            Map.entry("cyan_concrete_powder", STABLE_CYAN_CONCRETE_POWDER),
+            Map.entry("light_blue_concrete_powder", STABLE_LIGHT_BLUE_CONCRETE_POWDER),
+            Map.entry("blue_concrete_powder", STABLE_BLUE_CONCRETE_POWDER),
+            Map.entry("purple_concrete_powder", STABLE_PURPLE_CONCRETE_POWDER),
+            Map.entry("magenta_concrete_powder", STABLE_MAGENTA_CONCRETE_POWDER),
+            Map.entry("pink_concrete_powder", STABLE_PINK_CONCRETE_POWDER)
+    );
+
+    public static final Map<String, BlockInfo> REGISTERED_STABLE_ANVILS = Map.ofEntries(
+            Map.entry("anvil", STABLE_ANVIL), Map.entry("chipped_anvil", STABLE_CHIPPED_ANVIL),
+            Map.entry("damaged_anvil", STABLE_DAMAGED_ANVIL)
+    );
 
     public static final SlabInfo WHITE_CONCRETE_SLAB = registerSlabBlock("white_concrete_slab", Blocks.WHITE_CONCRETE);
     public static final SlabInfo LIGHT_GRAY_CONCRETE_SLAB = registerSlabBlock("light_gray_concrete_slab",
@@ -312,7 +584,7 @@ public class MotrBlocks {
     public static final SlabInfo GOLD_BLOCK_SLAB = registerSlabBlock("gold_block_slab", Blocks.GOLD_BLOCK);
     public static final SlabInfo IRON_BLOCK_SLAB = registerSlabBlock("iron_block_slab", Blocks.IRON_BLOCK);
 
-    public static final Map<String, SlabInfo> REGISTERED_STANDARD_SLABS = Map.ofEntries(
+    public static final Map<String, SlabInfo> REGISTERED_STANDARD_SLABS = Map.<String, SlabInfo>ofEntries(
             Map.entry("white_concrete", WHITE_CONCRETE_SLAB),
             Map.entry("light_gray_concrete", LIGHT_GRAY_CONCRETE_SLAB), Map.entry("gray_concrete", GRAY_CONCRETE_SLAB),
             Map.entry("black_concrete", BLACK_CONCRETE_SLAB), Map.entry("brown_concrete", BROWN_CONCRETE_SLAB),
@@ -894,6 +1166,33 @@ public class MotrBlocks {
         return register;
     }
 
+    private static BlockInfo registerStableBlock(String id, Block baseBlock) {
+        DeferredBlock<Block> block = BLOCKS.register(id,
+                () -> new Block(BlockBehaviour.Properties.ofFullCopy(baseBlock).setId(blockId(id))));
+        MotrItems.registerStableBlockItem(id, block);
+        return new BlockInfo(block, baseBlock);
+    }
+
+    private static QuenchedBlockInfo registerQuenchedBlock(String id, Block baseBlock, Supplier<Block> blockSupplier) {
+        DeferredBlock<Block> block = BLOCKS.register(id, blockSupplier);
+        MotrItems.registerQuenchedBlockItem(id, block);
+        return new QuenchedBlockInfo(block, baseBlock);
+    }
+
+    private static UnboundBlockInfo registerUnboundBlock(String id, Block baseBlock, Supplier<Block> blockSupplier) {
+        DeferredBlock<Block> block = BLOCKS.register(id, blockSupplier);
+        MotrItems.registerUnboundBlockItem(id, block);
+
+        return new UnboundBlockInfo(block, baseBlock);
+    }
+
+    public static BlockInfo registerStableAnvilBlock(String id, Block baseBlock) {
+        DeferredBlock<Block> block = BLOCKS.register(id,
+                () -> new StableAnvilBlock(BlockBehaviour.Properties.ofFullCopy(baseBlock).setId(blockId(id))));
+        MotrItems.registerStableBlockItem(id, block);
+        return new BlockInfo(block, baseBlock);
+    }
+
     private static <T extends Block> DeferredBlock<T> registerDevBlock(String key, Supplier<T> sup) {
         DeferredBlock<T> register = BLOCKS.register(key, sup);
         MotrItems.registerSimpleDevBlockItem(key, register);
@@ -905,7 +1204,7 @@ public class MotrBlocks {
             BlockBehaviour.Properties properties = BlockBehaviour.Properties.ofFullCopy(baseBlock).setId(blockId(id));
 
             if (baseBlock == Blocks.ICE || baseBlock == Blocks.PACKED_ICE || baseBlock == Blocks.BLUE_ICE) {
-                return new MotrBlocks.IceSlabBlock(properties.friction(0.98f));
+                return new IceSlabBlock(properties.friction(0.98f));
             }
 
             return new SlabBlock(properties);
@@ -914,7 +1213,7 @@ public class MotrBlocks {
     }
 
     private static WallInfo registerWallBlock(String id, Block baseBlock) {
-        DeferredBlock<?> wall = registerBlock(id, () -> new net.minecraft.world.level.block.WallBlock(
+        DeferredBlock<?> wall = registerBlock(id, () -> new WallBlock(
                 BlockBehaviour.Properties.ofFullCopy(baseBlock).setId(blockId(id))));
         return new WallInfo(wall, baseBlock);
     }
@@ -954,4 +1253,5 @@ public class MotrBlocks {
         return ResourceKey.create(Registries.BLOCK,
                 ResourceLocation.fromNamespaceAndPath(MaterialsOfTheRift.MODID, name));
     }
+
 }

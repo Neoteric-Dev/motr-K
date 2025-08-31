@@ -6,6 +6,8 @@ bin
 .classpath
 .project
 
+
+src/generated
 # idea
 out
 *.ipr
