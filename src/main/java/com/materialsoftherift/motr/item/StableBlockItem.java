@@ -21,7 +21,9 @@ public class StableBlockItem extends GlowingBlockItem {
             @NotNull List<Component> list,
             @NotNull TooltipFlag flag) {
         list.add(Component.translatable("item.motr.ignores_gravity"));
+
         super.appendHoverText(item, tooltipContext, list, flag);
     }
+
 
 }

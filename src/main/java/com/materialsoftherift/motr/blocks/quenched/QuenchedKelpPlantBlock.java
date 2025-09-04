@@ -6,22 +6,19 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.GrowingPlantHeadBlock;
 import net.minecraft.world.level.block.KelpBlock;
+import net.minecraft.world.level.block.KelpPlantBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class QuenchedKelpBlock extends KelpBlock {
+public class QuenchedKelpPlantBlock extends KelpPlantBlock {
 
-    public QuenchedKelpBlock(Properties properties) {
+    public QuenchedKelpPlantBlock(Properties properties) {
         super(properties);
-    }
-
-    @Override
-    protected boolean canGrowInto(@NotNull BlockState state) {
-        return true;
     }
 
     @Override
@@ -30,8 +27,8 @@ public class QuenchedKelpBlock extends KelpBlock {
     }
 
     @Override
-    protected @NotNull Block getBodyBlock() {
-        return MotrBlocks.QUENCHED_KELP_PLANT.block().get();
+    protected @NotNull GrowingPlantHeadBlock getHeadBlock() {
+        return (GrowingPlantHeadBlock) MotrBlocks.QUENCHED_KELP.block().get();
     }
 
     @Override

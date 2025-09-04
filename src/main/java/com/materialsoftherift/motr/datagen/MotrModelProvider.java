@@ -2,8 +2,10 @@ package com.materialsoftherift.motr.datagen;
 
 import com.materialsoftherift.motr.MaterialsOfTheRift;
 import com.materialsoftherift.motr.init.MotrBlocks;
+import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import net.minecraft.Util;
 import net.minecraft.client.color.item.GrassColorSource;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
@@ -21,6 +23,7 @@ import net.neoforged.neoforge.client.model.generators.template.ExtendedModelTemp
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.function.Function;
 
 public class MotrModelProvider extends ModelProvider {
 
@@ -44,6 +47,13 @@ public class MotrModelProvider extends ModelProvider {
 
         MotrBlocks.REGISTERED_QUENCHED_BLOCKS.forEach(
                 (texture, blockInfo) -> {
+                    if (blockInfo.baseBlock() instanceof BubbleColumnBlock) {
+                        ResourceLocation itemTexture = ResourceLocation.withDefaultNamespace("item/barrier");
+                        itemModels.itemModelOutput.accept(blockInfo.block().get().asItem(),
+                                ItemModelUtils.plainModel(itemTexture));
+                        blockModels.createParticleOnlyBlock(blockInfo.block().get(), Blocks.WATER);
+                        return;
+                    }
                     if (blockInfo.baseBlock() instanceof CoralFanBlock) {
                         TexturedModel texturedmodel = TexturedModel.CORAL_FAN.get(blockInfo.baseBlock());
                         ResourceLocation resourcelocation = texturedmodel.create(blockInfo.baseBlock(),
@@ -94,13 +104,31 @@ public class MotrModelProvider extends ModelProvider {
                     Item unboundItem = unboundBlock.asItem();
 
                     if (baseBlock instanceof GlowLichenBlock) {
-                        ResourceLocation defaultModel = ModelLocationUtils.getModelLocation(blockInfo.baseBlock());
-                        itemModels.itemModelOutput.accept(blockInfo.block().get().asItem(),
-                                ItemModelUtils.plainModel(defaultModel));
+                        ResourceLocation itemTexture = ResourceLocation.withDefaultNamespace("block/glow_lichen");
+                        ResourceLocation itemModelLocation = ModelTemplates.FLAT_ITEM.create(
+                                ModelLocationUtils.getModelLocation(unboundItem),
+                                TextureMapping.layer0(itemTexture),
+                                itemModels.modelOutput);
+                        itemModels.itemModelOutput.accept(unboundItem, ItemModelUtils.plainModel(itemModelLocation));
 
-                        ResourceLocation vanillaModel = ModelLocationUtils.getModelLocation(blockInfo.baseBlock());
-                        blockModels.blockStateOutput
-                                .accept(BlockModelGenerators.createSimpleBlock(blockInfo.block().get(), vanillaModel));
+                        ResourceLocation resourcelocation = ModelLocationUtils.getModelLocation(baseBlock);
+                        MultiPartGenerator multipartgenerator = MultiPartGenerator.multiPart(unboundBlock);
+                        Condition.TerminalCondition condition$terminalcondition = Util.make(Condition.condition(), (p_387548_) -> BlockModelGenerators.MULTIFACE_GENERATOR.stream().map(Pair::getFirst).map(MultifaceBlock::getFaceProperty).forEach((p_387201_) -> {
+                            if (unboundBlock.defaultBlockState().hasProperty(p_387201_)) {
+                                p_387548_.term(p_387201_, false);
+                            }
+
+                        }));
+                        for(Pair<Direction, Function<ResourceLocation, Variant>> pair : BlockModelGenerators.MULTIFACE_GENERATOR) {
+                            BooleanProperty booleanproperty = MultifaceBlock.getFaceProperty(pair.getFirst());
+                            Function<ResourceLocation, Variant> function = pair.getSecond();
+                            if (unboundBlock.defaultBlockState().hasProperty(booleanproperty)) {
+                                multipartgenerator.with(Condition.condition().term(booleanproperty, true), function.apply(resourcelocation));
+                                multipartgenerator.with(condition$terminalcondition, function.apply(resourcelocation));
+                            }
+                        }
+
+                        blockModels.blockStateOutput.accept(multipartgenerator);
                         return;
                     }
 

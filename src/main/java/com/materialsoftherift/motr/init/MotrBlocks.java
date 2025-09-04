@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -92,12 +93,16 @@ public class MotrBlocks {
     public static final QuenchedBlockInfo QUENCHED_KELP = registerQuenchedBlock("quenched_kelp", Blocks.KELP,
             () -> new QuenchedKelpBlock(
                     BlockBehaviour.Properties.ofFullCopy(Blocks.KELP).setId(blockId("quenched_kelp"))));
+    public static final QuenchedBlockInfo QUENCHED_KELP_PLANT = registerQuenchedBlock("quenched_kelp_plant", Blocks.KELP_PLANT,
+            () -> new QuenchedKelpBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.KELP_PLANT).setId(blockId("quenched_kelp_plant"))));
     public static final QuenchedBlockInfo QUENCHED_SEAGRASS = registerQuenchedBlock("quenched_seagrass",
             Blocks.SEAGRASS, () -> new QuenchedSeagrassBlock(
                     BlockBehaviour.Properties.ofFullCopy(Blocks.SEAGRASS).setId(blockId("quenched_seagrass"))));
     public static final QuenchedBlockInfo QUENCHED_SEA_PICKLE = registerQuenchedBlock("quenched_sea_pickle",
             Blocks.SEA_PICKLE, () -> new QuenchedSeaPickleBlock(
-                    BlockBehaviour.Properties.ofFullCopy(Blocks.SEA_PICKLE).setId(blockId("quenched_sea_pickle"))));
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.SEA_PICKLE)
+                            .lightLevel(block -> 3 + 3 * block.getValue(SeaPickleBlock.PICKLES)).setId(blockId("quenched_sea_pickle"))));
     public static final QuenchedBlockInfo QUENCHED_TUBE_CORAL = registerQuenchedBlock("quenched_tube_coral",
             Blocks.TUBE_CORAL_BLOCK,
             () -> new QuenchedCoralBlock(Blocks.DEAD_TUBE_CORAL_BLOCK,
@@ -157,7 +162,8 @@ public class MotrBlocks {
 
     public static final Map<String, QuenchedBlockInfo> REGISTERED_QUENCHED_BLOCKS = Map.ofEntries(
             Map.entry("kelp", QUENCHED_KELP), Map.entry("seagrass", QUENCHED_SEAGRASS),
-            Map.entry("sea_pickle", QUENCHED_SEA_PICKLE), Map.entry("tube_coral", QUENCHED_TUBE_CORAL),
+            Map.entry("kelp_plant", QUENCHED_KELP_PLANT), Map.entry("sea_pickle", QUENCHED_SEA_PICKLE),
+            Map.entry("tube_coral", QUENCHED_TUBE_CORAL),
             Map.entry("brain_coral", QUENCHED_BRAIN_CORAL), Map.entry("bubble_coral", QUENCHED_BUBBLE_CORAL),
             Map.entry("fire_coral", QUENCHED_FIRE_CORAL), Map.entry("horn_coral", QUENCHED_HORN_CORAL),
             Map.entry("tube_coral_fan", QUENCHED_TUBE_CORAL_FAN),
@@ -224,30 +230,6 @@ public class MotrBlocks {
             Blocks.CHERRY_SAPLING,
             () -> new UnboundSaplingBlock(TreeGrower.CHERRY, BlockBehaviour.Properties.ofFullCopy(Blocks.CHERRY_SAPLING)
                     .setId(blockId("unbound_cherry_sapling"))));
-//    public static final UnboundBlockInfo UNBOUND_POTTED_OAK_SAPLING = registerUnboundBlock("unbound_potted_oak_sapling",
-//            Blocks.POTTED_OAK_SAPLING,
-//            () -> new UnboundSaplingBlock(TreeGrower.OAK, BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_OAK_SAPLING).setId(blockId("unbound_potted_oak_sapling"))));
-//    public static final UnboundBlockInfo UNBOUND_POTTED_SPRUCE_SAPLING = registerUnboundBlock("unbound_potted_spruce_sapling",
-//            Blocks.POTTED_SPRUCE_SAPLING, () -> new FlowerPotBlock(() -> (FlowerPotBlock)Blocks.FLOWER_POT, () -> UNBOUND_SPRUCE_SAPLING.block().get(),
-//                    BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_SPRUCE_SAPLING).setId(blockId("unbound_potted_spruce_sapling"))));
-//    public static final UnboundBlockInfo UNBOUND_POTTED_BIRCH_SAPLING = registerUnboundBlock("unbound_potted_birch_sapling",
-//            Blocks.POTTED_BIRCH_SAPLING, () -> new FlowerPotBlock(() -> (FlowerPotBlock)Blocks.FLOWER_POT, () -> UNBOUND_BIRCH_SAPLING.block().get(),
-//                    BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_BIRCH_SAPLING).setId(blockId("unbound_potted_birch_sapling"))));
-//    public static final UnboundBlockInfo UNBOUND_POTTED_JUNGLE_SAPLING = registerUnboundBlock("unbound_potted_jungle_sapling",
-//            Blocks.POTTED_JUNGLE_SAPLING, () -> new FlowerPotBlock(() -> (FlowerPotBlock)Blocks.FLOWER_POT, () -> UNBOUND_JUNGLE_SAPLING.block().get(),
-//                    BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_JUNGLE_SAPLING).setId(blockId("unbound_potted_jungle_sapling"))));
-//    public static final UnboundBlockInfo UNBOUND_POTTED_ACACIA_SAPLING = registerUnboundBlock("unbound_potted_acacia_sapling",
-//            Blocks.POTTED_ACACIA_SAPLING, () -> new FlowerPotBlock(() -> (FlowerPotBlock)Blocks.FLOWER_POT, () -> UNBOUND_ACACIA_SAPLING.block().get(),
-//                    BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_ACACIA_SAPLING).setId(blockId("unbound_potted_acacia_sapling"))));
-//    public static final UnboundBlockInfo UNBOUND_POTTED_DARK_OAK_SAPLING = registerUnboundBlock("unbound_potted_dark_oak_sapling",
-//            Blocks.POTTED_DARK_OAK_SAPLING, () -> new FlowerPotBlock(() -> (FlowerPotBlock)Blocks.FLOWER_POT, () -> UNBOUND_DARK_OAK_SAPLING.block().get(),
-//                    BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_DARK_OAK_SAPLING).setId(blockId("unbound_potted_dark_oak_sapling"))));
-//    public static final UnboundBlockInfo UNBOUND_POTTED_MANGROVE_PROPAGULE = registerUnboundBlock("unbound_potted_mangrove_propagule",
-//            Blocks.POTTED_MANGROVE_PROPAGULE, () -> new FlowerPotBlock(() -> (FlowerPotBlock)Blocks.FLOWER_POT, () -> UNBOUND_MANGROVE_PROPAGULE.block().get(),
-//                    BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_MANGROVE_PROPAGULE).setId(blockId("unbound_potted_mangrove_propagule"))));
-//    public static final UnboundBlockInfo UNBOUND_POTTED_CHERRY_SAPLING = registerUnboundBlock("unbound_potted_cherry_sapling",
-//            Blocks.POTTED_CHERRY_SAPLING, () -> new FlowerPotBlock(() -> (FlowerPotBlock)Blocks.FLOWER_POT, () -> UNBOUND_CHERRY_SAPLING.block().get(),
-//                    BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_CHERRY_SAPLING).setId(blockId("unbound_potted_cherry_sapling"))));
     public static final UnboundBlockInfo UNBOUND_SHORT_GRASS = registerUnboundBlock("unbound_short_grass",
             Blocks.SHORT_GRASS, () -> new UnboundTallGrassBlock(
                     BlockBehaviour.Properties.ofFullCopy(Blocks.SHORT_GRASS).setId(blockId("unbound_short_grass"))));
@@ -354,14 +336,6 @@ public class MotrBlocks {
             Map.entry("jungle_sapling", UNBOUND_JUNGLE_SAPLING), Map.entry("acacia_sapling", UNBOUND_ACACIA_SAPLING),
             Map.entry("dark_oak_sapling", UNBOUND_DARK_OAK_SAPLING),
             Map.entry("mangrove_propagule", UNBOUND_MANGROVE_PROPAGULE),
-//            Map.entry("potted_oak_sapling", UNBOUND_POTTED_OAK_SAPLING),
-//            Map.entry("potted_spruce_sapling", UNBOUND_POTTED_SPRUCE_SAPLING),
-//            Map.entry("potted_birch_sapling", UNBOUND_POTTED_BIRCH_SAPLING),
-//            Map.entry("potted_jungle_sapling", UNBOUND_POTTED_JUNGLE_SAPLING),
-//            Map.entry("potted_acacia_sapling", UNBOUND_POTTED_ACACIA_SAPLING),
-//            Map.entry("potted_dark_oak_sapling", UNBOUND_POTTED_DARK_OAK_SAPLING),
-//            Map.entry("potted_mangrove_propagule", UNBOUND_POTTED_MANGROVE_PROPAGULE),
-//            Map.entry("potted_cherry_propagule", UNBOUND_POTTED_CHERRY_SAPLING),
             Map.entry("cherry_sapling", UNBOUND_CHERRY_SAPLING), Map.entry("short_grass", UNBOUND_SHORT_GRASS),
             Map.entry("tall_grass", UNBOUND_TALL_GRASS), Map.entry("fern", UNBOUND_FERN),
             Map.entry("large_fern", UNBOUND_LARGE_FERN), Map.entry("dandelion", UNBOUND_DANDELION),

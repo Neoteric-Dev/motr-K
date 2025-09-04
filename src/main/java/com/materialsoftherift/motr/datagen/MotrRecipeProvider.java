@@ -34,6 +34,7 @@ public class MotrRecipeProvider extends RecipeProvider {
         MotrBlocks.REGISTERED_QUENCHED_BLOCKS.forEach((id, blockInfo) -> {
             ItemLike quenchedBlock = blockInfo.block().get();
             ItemLike vanillaBlock = blockInfo.getBaseItem();
+            if (vanillaBlock == Items.AIR) return;
 
             ShapelessRecipeBuilder.shapeless(getter, RecipeCategory.BUILDING_BLOCKS, quenchedBlock, 1)
                     .requires(vanillaBlock)

@@ -83,7 +83,7 @@ public class MotrLanguageProvider extends LanguageProvider {
 
     private void addQuenchedBlockTranslations(Map<String, MotrBlocks.QuenchedBlockInfo> blockMap) {
         blockMap.forEach((baseName, quenchedBlockInfo) -> {
-            String translation = "Quanched " + snakeCaseToCapitalizedCase(baseName);
+            String translation = "Quenched " + snakeCaseToCapitalizedCase(baseName);
             addBlock(quenchedBlockInfo.block(), translation);
         });
     }
