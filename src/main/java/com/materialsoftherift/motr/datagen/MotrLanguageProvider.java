@@ -1,14 +1,7 @@
 package com.materialsoftherift.motr.datagen;
 
 import com.materialsoftherift.motr.MaterialsOfTheRift;
-import com.materialsoftherift.motr.init.MotrBlocks;
-import com.materialsoftherift.motr.init.MotrButtons;
-import com.materialsoftherift.motr.init.MotrFenceAndGate;
-import com.materialsoftherift.motr.init.MotrNoGrav;
-import com.materialsoftherift.motr.init.MotrQuenched;
-import com.materialsoftherift.motr.init.MotrSlabs;
-import com.materialsoftherift.motr.init.MotrStairs;
-import com.materialsoftherift.motr.init.MotrWalls;
+import com.materialsoftherift.motr.init.*;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;
@@ -56,10 +49,28 @@ public class MotrLanguageProvider extends LanguageProvider {
 
         addStairTranslations(MotrStairs.REGISTERED_STANDARD_STAIRS);
 
+        addUnboundTranslations(MotrUnbound.UNBOUND_WHEAT_STAGES, "Wheat");
+        addUnboundTranslations(MotrUnbound.UNBOUND_CARROT_STAGES, "Carrot");
+        addUnboundTranslations(MotrUnbound.UNBOUND_POTATO_STAGES, "Potato");
+        addUnboundTranslations(MotrUnbound.UNBOUND_BEETROOT_STAGES, "Beetroot");
+        addUnboundTranslations(MotrUnbound.UNBOUND_NETHER_WART_STAGES, "Nether Wart");
+        addUnboundTranslations(MotrUnbound.UNBOUND_MELON_STEM_STAGES, "Melon Stem");
+        addUnboundTranslations(MotrUnbound.UNBOUND_PUMPKIN_STEM_STAGES, "Pumpkin Stem");
+        addUnboundTranslations(MotrUnbound.UNBOUND_TORCHFLOWER_STAGES, "Torchflower");
+        addUnboundTranslations(MotrUnbound.UNBOUND_PITCHER_CROP_STAGES, "Pitcher Crop");
+        addUnboundTranslations(MotrUnbound.UNBOUND_COCOA_STAGES, "Cocoa");
+
         add("itemGroup." + MaterialsOfTheRift.MODID, "MotR");
 
-        addBlock(MotrBlocks.HAY_CARPET, "Hay Carpet");
+        addBlock(MotrUnbound.UNBOUND_BAMBOO_SAPLING, "Unbound Bamboo Sapling");
+        addBlock(MotrUnbound.UNBOUND_CACTUS.block(), "Unbound Cactus");
+        addBlock(MotrUnbound.UNBOUND_SUGAR_CANE.block(), "Unbound Sugar Cane");
+        addBlock(MotrUnbound.UNBOUND_VINE.block(), "Unbound Vine");
+        addBlock(MotrUnbound.UNBOUND_LILY_PAD.block(), "Unbound Lily Pad");
 
+        addBlock(MotrBlocks.HAY_CARPET, "Hay Carpet");
+        addBlock(MotrBlocks.WIND_COLUMN, "Wind Column");
+        addItem(MotrItems.WIND_CHARGE_ITEM, "Wind Charge");
     }
 
     private static @NotNull String getTranslationString(Block block) {
@@ -130,6 +141,13 @@ public class MotrLanguageProvider extends LanguageProvider {
         wallMap.forEach((baseName, wallInfo) -> {
             String translation = snakeCaseToCapitalizedCase(baseName) + " Wall";
             addBlock(wallInfo.wall(), translation);
+        });
+    }
+
+    private void addUnboundTranslations(Map<Integer, MotrUnbound.UnboundBlockInfo> unboundMap, String cropName) {
+        unboundMap.forEach((stage, info) -> {
+            String translation = "Unbound " + cropName + " (Stage " + stage + ")";
+            addBlock(info.block(), translation);
         });
     }
 
